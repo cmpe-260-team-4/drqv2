@@ -45,7 +45,7 @@ Rather than entering your SJSU password each time you want to connect to the HPC
     ```
 5. Run [connect.sh](src/main/sh/hpc/connect.sh):
     ```shell
-    src/main/sh//hpc/connect.sh
+    src/main/sh/hpc/connect.sh
     ```
 
 ### Clone repo on the HPC system

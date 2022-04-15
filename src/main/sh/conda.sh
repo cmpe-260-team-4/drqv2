@@ -1,3 +1,8 @@
+# shellcheck disable=SC2034
+MUJOCO_PY_MJKEY_PATH=~/.mujoco/mjkey.txt
+MUJOCO_PY_MUJOCO_PATH=~/.mujoco
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.mujoco/mujoco200/bin
+
 # because of https://namespaceit.com/blog/the-unauthenticated-git-protocol-on-port-9418-is-no-longer-supported and
 # https://github.blog/2021-09-01-improving-git-protocol-security-github/, you have to run this:
 git config --global url."https://".insteadOf git://
