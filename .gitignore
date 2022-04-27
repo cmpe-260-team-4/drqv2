@@ -11,3 +11,7 @@ dmc_benchmarks.py
 check_sweep.py
 cancel_sweep.py
 .idea
+
+# Added by cmpe-260-team-4
+auxil
+out

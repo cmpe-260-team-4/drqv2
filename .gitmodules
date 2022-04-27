@@ -1,0 +1,3 @@
+[submodule "src/main/tex/ieeetran"]
+	path = src/main/tex/ieeetran
+	url = git@github.com:sirilla/ieeetran.git
