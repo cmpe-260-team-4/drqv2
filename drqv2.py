@@ -145,9 +145,9 @@ class DrQV2Agent:
         self.critic_target.load_state_dict(self.critic.state_dict())
 
         # optimizers
-        self.encoder_opt = torch.optim.Adam(self.encoder.parameters(), lr=lr)
-        self.actor_opt = torch.optim.Adam(self.actor.parameters(), lr=lr)
-        self.critic_opt = torch.optim.Adam(self.critic.parameters(), lr=lr)
+        self.encoder_opt = torch.optim.AdamW(self.encoder.parameters(), lr=lr)
+        self.actor_opt = torch.optim.AdamW(self.actor.parameters(), lr=lr)
+        self.critic_opt = torch.optim.AdamW(self.critic.parameters(), lr=lr)
 
         # data augmentation
         self.aug = RandomShiftsAug(pad=4)
