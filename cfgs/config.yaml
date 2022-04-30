@@ -28,7 +28,7 @@ use_tb: true
 # experiment
 experiment: exp
 # agent
-lr: 1e-3
+lr: 1e-2
 feature_dim: 50
 
 agent:
