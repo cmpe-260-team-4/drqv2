@@ -12,6 +12,7 @@ source src/main/sh/hpc/config.sh
 module load cuda/10.1
 eval "$(conda shell.bash hook)"
 conda activate drqv2
+cat cgs/task/medium.yaml
 # note: the & starts the program in the background so we can run tensorboard while it's running
 python train.py task="$TASK" &
 tensorboard --logdir exp_local --port "$GPU_PORT"
