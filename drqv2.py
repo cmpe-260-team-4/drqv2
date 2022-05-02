@@ -8,6 +8,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+
 import utils
 
 
@@ -149,6 +151,11 @@ class DrQV2Agent:
         self.actor_opt = torch.optim.Adam(self.actor.parameters(), lr=lr)
         self.critic_opt = torch.optim.Adam(self.critic.parameters(), lr=lr)
 
+        # learning rate scheduler
+        self.enc_scheduler = ReduceLROnPlateau(self.encoder_opt, 'min')
+        self.act_scheduler = ReduceLROnPlateau(self.actor_opt, 'min')
+        self.cri_scheduler = ReduceLROnPlateau(self.critic_opt, 'min')
+
         # data augmentation
         self.aug = RandomShiftsAug(pad=4)
 
@@ -201,6 +208,10 @@ class DrQV2Agent:
         self.critic_opt.step()
         self.encoder_opt.step()
 
+        # optimize encoder and critic scheduler
+        self.enc_scheduler.step()
+        self.cri_scheduler.step()
+
         return metrics
 
     def update_actor(self, obs, step):
@@ -219,6 +230,9 @@ class DrQV2Agent:
         self.actor_opt.zero_grad(set_to_none=True)
         actor_loss.backward()
         self.actor_opt.step()
+
+        # optimize actor scheduler
+        self.act_scheduler.step()
 
         if self.use_tb:
             metrics['actor_loss'] = actor_loss.item()
