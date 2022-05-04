@@ -36,8 +36,15 @@
     \maketitle
 
     \begin{abstract}
-Reinforcement learning (RL) problems are notorious for their extensive training times due, in part, to uncertainty in the environment space. DrQ-v2 is an off-policy algorithm published by facebook in 2021 which efficiently models continuous systems through sampling as a means of speeding up convergence and learning. Uniquely, DrQ-v2 is the first RL algorithm to learn from direct pixel observation by comparing the current frame to the previous and future frames.
-The purpose of this paper is thus to conduct an ablation study to understand the inner mechanisms of DrQ-v2 and attempt to improve its learning capabilities. In order to train our models we use MuJoCo environments to simulate continuous action spaces. Due to hardware limitations we train our models in environments of medium difficulty such as ___, ___, and ___. After tuning relevant hyperparameters, including ____ and ____, we find that DrQ-v2 is able to …. Describe results and strength of model through adjustments of hyper parameters.
+        
+    Modern approaches to reinforcement learning (RL) are notorious for their extensive training times and complexity due, in part, 
+    to the necessary robustness of these systems in an uncertain environment space. As the problem space complexity continues to rise, 
+    more efficient systems must be developed to deal with the exponential rise in training times. DrQ-v2 is the second iteration of an 
+    off-policy actor-critic sampling algorithm which aims to efficiently model complex continuous systems with the help of data 
+    augmentation and notably uses single gpu architecture. DrQ-v2 focuses on solving visually continuous control through direct pixel 
+    observation. This state-of-the-art algorithm is the first model free approach to be capable of direct pixel observation and solve 
+    humanoid movement tasks in record time. In this paper we will highlight important components which contribute to its efficiency and 
+    ingenuity, then proceed to perform an ablation study. 
 
 
     \end{abstract}
@@ -59,13 +66,29 @@ The purpose of this paper is thus to conduct an ablation study to understand the
 
     \[w = w - \eta \nabla f(w).\]
 
-    Reinforcement learning is plagued by ambiguity in the environment. As the environment grows in size or the potential hazards increase, a model must be capable of understanding how it will navigate the environment in a robust manner. Traditionally, RL has incurred immense computational challenges and has been very difficult to train. Modern RL models combat this by using dynamic systems. These dynamic systems can often be implemented using simple architectures such as the one proposed by Facebook researchers, DrQ-v2. DrQ-v2 shatters many of these expectations by significantly reducing training times and improving the ease of implementation.
-    At its core DrQ-v2 is an off-policy sampling algorithm which uses many statistical principles to improve training time and convergence. (Discuss core of DrQ-v2 and why its fast)
-
-    (Discuss what the aim of this paper is for a paragraph. Include why this is important and what we are trying to do.)
+    Efficient sampling of high-dimensional data has been a long standing problem in the field of RL. Through recent advances in 
+    sampling and data augmentation, DrQ-v2 has been able to solve complex humanoid tasks in a fraction of the time other models 
+    would need. DreamerV2 is one of these state-of-the-art models which has incorporated these recent advances. Despite this, it 
+    trains 4x slower than DrQ-v2 and requires a multi-gpu architecture. To understand this discrepancy in training times we must 
+    look at the design decisions and the components which make up the model. 
+    DrQ-v2 uses a range of different methods to achieve its efficiency including a decay scheduler, sampling, improved replay buffer, 
+    and a deep deterministic policy gradient (DDPG). The decay scheduler acts as a way of controlling the exploration rate of the model. 
+    Sampling is used to reduce the computational load by extracting 3 consecutive pixel observations at a time. The replay buffer has 
+    been updated from their initial DrQ implementation and has resulted in their implementation being 3.5x faster. Finally, and most 
+    notably, DrQ-v2 uses a DDPG to manage the rate of reward propagation. 
+    While DrQ-v2 is a state-of-the-art model with a range of optimizations, there appears to be further room for improvement in a range 
+    of minor changes. The aim of this paper is thus to explore DrQ-v2 and present additional optimizations that may incur performance 
+    benefits to our training time or convergence. We will explore methods such as standard deviation tuning and learning rate scheduling 
+    in an attempt to improve DrQ-v2.
 
 
     \section{Problem Definition}\label{sec:problem-definition}
+
+    The stunning success of DrQ-v2, when compared to other state-of-the-art methods, warrants further exploration into the internal 
+    mechanisms. During this initial exploration we found certain components, such as hyperparameters and optimizers, which appeared 
+    to have been unoptimized. With this understanding we began to formulate experiments we could conduct on the HPC which may offer 
+    some improvement to the base model. The following sections will demonstrate our attempts at improving training times and convergence 
+    rates given the already highly optimized design.
 
     \section{Methodology}\label{sec:methodology}
 
