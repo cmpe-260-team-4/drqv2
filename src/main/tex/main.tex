@@ -9,6 +9,17 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+
+%% We will externalize the figures
+%\usepgfplotslibrary{external}
+%\tikzexternalize
+
+\usepackage{filecontents}
+\begin{filecontents*}{data.csv}
+\end{filecontents*}
+
 \begin{document}
 
     \title{DrQ-v2 Ablation Study}
@@ -38,12 +49,12 @@
     \begin{abstract}
         
     Modern approaches to reinforcement learning (RL) are notorious for their extensive training times and complexity due, in part, 
-    to the necessary robustness of these systems in an uncertain environment space. As the problem space complexity continues to rise, 
-    more efficient systems must be developed to deal with the exponential rise in training times. DrQ-v2 is the second iteration of an 
+    to the necessary robustness of these systems in an uncertain environment space.\ As the problem space complexity continues to rise,
+    more efficient systems must be developed to deal with the exponential rise in training times.\ DrQ-v2 is the second iteration of an
     off-policy actor-critic sampling algorithm which aims to efficiently model complex continuous systems with the help of data 
-    augmentation and notably uses single gpu architecture. DrQ-v2 focuses on solving visually continuous control through direct pixel 
-    observation. This state-of-the-art algorithm is the first model free approach to be capable of direct pixel observation and solve 
-    humanoid movement tasks in record time. In this paper we will highlight important components which contribute to its efficiency and 
+    augmentation and notably uses single gpu architecture.\ DrQ-v2 focuses on solving visually continuous control through direct pixel
+    observation.\ This state-of-the-art algorithm is the first model free approach to be capable of direct pixel observation and solve
+    humanoid movement tasks in record time.\ In this paper we will highlight important components which contribute to its efficiency and
     ingenuity, then proceed to perform an ablation study. 
 
 
@@ -66,33 +77,61 @@
 
     \[w = w - \eta \nabla f(w).\]
 
-    Efficient sampling of high-dimensional data has been a long standing problem in the field of RL. Through recent advances in 
+    Efficient sampling of high-dimensional data has been a long-standing problem in the field of RL. Through recent advances in
     sampling and data augmentation, DrQ-v2 has been able to solve complex humanoid tasks in a fraction of the time other models 
-    would need. DreamerV2 is one of these state-of-the-art models which has incorporated these recent advances. Despite this, it 
-    trains 4x slower than DrQ-v2 and requires a multi-gpu architecture. To understand this discrepancy in training times we must 
-    look at the design decisions and the components which make up the model. 
+    would need.\ DreamerV2 is one of these state-of-the-art models which has incorporated these recent advances.\ Despite this, it
+    trains 4x slower than DrQ-v2 and requires a multi-gpu architecture.\ To understand this discrepancy in training times we must
+    look at the design decisions and the components which make up the model.
+
     DrQ-v2 uses a range of different methods to achieve its efficiency including a decay scheduler, sampling, improved replay buffer, 
-    and a deep deterministic policy gradient (DDPG). The decay scheduler acts as a way of controlling the exploration rate of the model. 
-    Sampling is used to reduce the computational load by extracting 3 consecutive pixel observations at a time. The replay buffer has 
-    been updated from their initial DrQ implementation and has resulted in their implementation being 3.5x faster. Finally, and most 
-    notably, DrQ-v2 uses a DDPG to manage the rate of reward propagation. 
+    and a deep deterministic policy gradient (DDPG).\ The decay scheduler acts as a way of controlling the exploration rate of the model.
+    Sampling is used to reduce the computational load by extracting 3 consecutive pixel observations at a time.\ The replay buffer has
+    been updated from their initial DrQ implementation and has resulted in their implementation being 3.5x faster.\ Finally, and most
+    notably, DrQ-v2 uses a DDPG to manage the rate of reward propagation.
+
     While DrQ-v2 is a state-of-the-art model with a range of optimizations, there appears to be further room for improvement in a range 
-    of minor changes. The aim of this paper is thus to explore DrQ-v2 and present additional optimizations that may incur performance 
-    benefits to our training time or convergence. We will explore methods such as standard deviation tuning and learning rate scheduling 
+    of minor changes.\ The aim of this paper is thus to explore DrQ-v2 and present additional optimizations that may incur performance
+    benefits to our training time or convergence.\ We will explore methods such as standard deviation tuning and learning rate scheduling
     in an attempt to improve DrQ-v2.
 
 
     \section{Problem Definition}\label{sec:problem-definition}
 
     The stunning success of DrQ-v2, when compared to other state-of-the-art methods, warrants further exploration into the internal 
-    mechanisms. During this initial exploration we found certain components, such as hyperparameters and optimizers, which appeared 
-    to have been unoptimized. With this understanding we began to formulate experiments we could conduct on the HPC which may offer 
-    some improvement to the base model. The following sections will demonstrate our attempts at improving training times and convergence 
+    mechanisms.\ During this initial exploration we found certain components, such as hyperparameters and optimizers, which appeared
+    to have been unoptimized.\ With this understanding we began to formulate experiments we could conduct on the HPC which may offer
+    some improvement to the base model.\ The following sections will demonstrate our attempts at improving training times and convergence
     rates given the already highly optimized design.
 
     \section{Methodology}\label{sec:methodology}
 
-    TODO
+    \begin{tikzpicture}
+    \begin{axis}[
+        title={Temperature dependence of CuSO\(_4\cdot\)5H\(_2\)O solubility},
+        xlabel={Temperature [\textcelsius]},
+        ylabel={Solubility [g per 100 g water]},
+        xmin=0, xmax=10,
+        ymin=0, ymax=10,
+        xtick={0,2,4,6,8,10},
+        ytick={0,2,4,6,8,10},
+        legend pos=north west,
+        ymajorgrids=true,
+        grid style=dashed,
+    ]
+
+%    \addplot[
+%        color=blue,
+%        mark=square,
+%        ]
+%        coordinates {
+%        (0,23.1)(10,27.5)(20,32)(30,37.8)(40,44.6)(60,61.8)(80,83.8)(100,114)
+%        };
+%        \legend{CuSO\(_4\cdot\)5H\(_2\)O}
+
+    \addplot table [x=a, y=c, col sep=comma] {data.csv};
+
+    \end{axis}
+    \end{tikzpicture}
 
     \section{Experiments}\label{sec:experiments}
 
