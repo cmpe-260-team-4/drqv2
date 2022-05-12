@@ -1,3 +1,4 @@
+%! suppress = EscapeUnderscore
 %! Author = Andrew Selvia
 %! Date = 2022.4.26
 
@@ -8,17 +9,14 @@
 \usepackage{mathtools} % https://tex.stackexchange.com/a/96353
 \usepackage{amsmath}
 \usepackage{amsfonts}
+\usepackage{tikz} % To generate the plot from csv
 
 \usepackage{pgfplots}
-\pgfplotsset{width=10cm,compat=1.9}
+\pgfplotsset{width = 10cm, compat = 1.9}
 
 %% We will externalize the figures
-%\usepgfplotslibrary{external}
-%\tikzexternalize
-
-\usepackage{filecontents}
-\begin{filecontents*}{data.csv}
-\end{filecontents*}
+\usepgfplotslibrary{external}
+\tikzexternalize[prefix=figures/]
 
 \begin{document}
 
@@ -107,28 +105,92 @@
 
     \begin{tikzpicture}
     \begin{axis}[
-        title={Temperature dependence of CuSO\(_4\cdot\)5H\(_2\)O solubility},
-        xlabel={Temperature [\textcelsius]},
-        ylabel={Solubility [g per 100 g water]},
-        xmin=0, xmax=10,
-        ymin=0, ymax=10,
-        xtick={0,2,4,6,8,10},
-        ytick={0,2,4,6,8,10},
-        legend pos=north west,
-        ymajorgrids=true,
-        grid style=dashed,
+        title = {Evaluating Tuning Hyperparameters on Walker Run for Reward by Epoch},
+        xlabel = {Epoch},
+        ylabel = {Reward},
+        xmin = 0, xmax = 3100,
+        ymin = 0, ymax = 770,
+        xtick = {0,500,1000,1500,2000,2500,2500,3000,3500},
+        ytick = {0,100,200,300,400,500,600,700,800,900},
+        legend pos = north west,
+        ymajorgrids = true,
+        grid = major,
+        legend entries = {$A$, $B$, $C$}
     ]
 
-%    \addplot[
-%        color=blue,
-%        mark=square,
-%        ]
-%        coordinates {
-%        (0,23.1)(10,27.5)(20,32)(30,37.8)(40,44.6)(60,61.8)(80,83.8)(100,114)
-%        };
-%        \legend{CuSO\(_4\cdot\)5H\(_2\)O}
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/walker_run_3090_eval_D.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/walker_run_2090_eval_D.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/walker_run_1550_eval_D.csv};
 
-    \addplot table [x=a, y=c, col sep=comma] {data.csv};
+    \end{axis}
+    \end{tikzpicture}
+
+    \begin{tikzpicture}
+    \begin{axis}[
+        title = {Evaluating Varying Mujoco Environments using DrQ-v2},
+        xlabel = {Epoch},
+        ylabel = {Reward},
+        xmin = 0, xmax = 3100,
+        ymin = 0, ymax = 1200,
+        xtick = {0,500,1000,1500,2000,2500,2500,3000,3500},
+        ytick = {0,200,400,600,800,1000,1200},
+        legend pos = north east,
+        ymajorgrids = true,
+        grid = major,
+        legend entries = {$Cheetah$, $Human walk$, $Cartpole$, $walker run$, $walker run1$} % Hyper parameters for the plots below
+    ]
+
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/cheetah_run_3090_eval_R.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/humanoid_walk_2420_eval_R.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/cartpole_balance_1090_eval_R.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/walker_run_1520_eval_R.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/walker_run_3090_eval_R.csv};
+
+    \end{axis}
+    \end{tikzpicture}
+
+    \begin{tikzpicture}
+    \begin{axis}[
+        title = {Training Tuning Hyperparameters on Walker Run for Reward by Epoch},
+        xlabel = {Epoch},
+        ylabel = {Reward},
+        xmin = 0, xmax = 3100,
+        ymin = -1000, ymax = 0,
+        xtick = {0,500,1000,1500,2000,2500,2500,3000,3500},
+        ytick = {-1000, -500, 0},
+        legend pos = north west,
+        ymajorgrids = true,
+        grid = major,
+        legend entries = {$A$, $B$, $C$}
+    ]
+
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/walker_run_3090_train_D.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/walker_run_2090_train_D.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/walker_run_1550_train_D.csv};
+
+    \end{axis}
+    \end{tikzpicture}
+
+    \begin{tikzpicture}
+    \begin{axis}[
+        title = {Training Varying Mujoco Environments using DrQ-v2},
+        xlabel = {Epoch},
+        ylabel = {Reward},
+        xmin = 0, xmax = 3100,
+        ymin = -1000, ymax = 0,
+        xtick = {0,500,1000,1500,2000,2500,2500,3000,3500},
+        ytick = {-1000, -500, 0},
+        legend pos = north east,
+        ymajorgrids = true,
+        grid = major,
+        legend entries = {$Cheetah$, $Human walk$, $Cartpole$, $walker run$, $walker run1$}
+    ]
+
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/cheetah_run_3090_train_R.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/humanoid_walk_2420_train_R.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/cartpole_balance_1090_train_R.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/walker_run_1520_train_R.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/walker_run_3090_train_R.csv};
 
     \end{axis}
     \end{tikzpicture}

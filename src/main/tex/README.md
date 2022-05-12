@@ -12,3 +12,10 @@ Add ieeetran as a submodule:
 ```shell
 git submodule add git@github.com:sirilla/ieeetran.git src/main/tex/ieeetran
 ```
+
+## Run Configuration
+
+Switch the compiler to **LuaLaTeX** to avoid running out of memory while generating plots with large numbers of data
+points as suggested [here](https://tex.stackexchange.com/questions/7953/how-to-expand-texs-main-memory-size-pgfplots-memory-overload#comment30336_7965).
+
+Add the following argument to the main run configuration: **Custom compiler arguments**: `-shell-escape`.
