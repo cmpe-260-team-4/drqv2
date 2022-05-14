@@ -92,7 +92,6 @@
     benefits to our training time or convergence.\ We will explore methods such as standard deviation tuning and learning rate scheduling
     in an attempt to improve DrQ-v2.
 
-
     \section{Problem Definition}\label{sec:problem-definition}
 
     The stunning success of DrQ-v2, when compared to other state-of-the-art methods, warrants further exploration into the internal 
@@ -105,92 +104,110 @@
 
     \begin{tikzpicture}
     \begin{axis}[
-        title = {Evaluating Tuning Hyperparameters on Walker Run for Reward by Epoch},
-        xlabel = {Epoch},
+        title = {Hyperparameter Tuning on Walker Run: Reward},
+        xlabel = {Episode},
         ylabel = {Reward},
-        xmin = 0, xmax = 3100,
-        ymin = 0, ymax = 770,
-        xtick = {0,500,1000,1500,2000,2500,2500,3000,3500},
+        xmin = 0, xmax = 3200,
+        ymin = 0, ymax = 800,
+        xtick = {0,400,800,1200,1600,2000,2400,2800,3200},
         ytick = {0,100,200,300,400,500,600,700,800,900},
-        legend pos = north west,
+        legend pos = south east,
         ymajorgrids = true,
         grid = major,
-        legend entries = {$A$, $B$, $C$}
+        mark size = .7pt,
+        axis line style = ultra thin,
+        legend entries = {$Control$, $Step-Linear$, $Lr:1e-2$, $Lr:1e-3$, $Adamw$}
     ]
 
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/walker_run_3090_eval_D.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/walker_run_2090_eval_D.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/walker_run_1550_eval_D.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/203408-walker-run-eval-control.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/184403-walker-run-eval-stepliner.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/215829-walker-run-eval-1e-2.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/214858-walker-run-eval-1e-3.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/222844-walker-run-eval-Adamw.csv};
 
     \end{axis}
     \end{tikzpicture}
 
     \begin{tikzpicture}
     \begin{axis}[
-        title = {Evaluating Varying Mujoco Environments using DrQ-v2},
-        xlabel = {Epoch},
+        title = {Mujoco Environments: Reward},
+        xlabel = {Episode},
         ylabel = {Reward},
-        xmin = 0, xmax = 3100,
-        ymin = 0, ymax = 1200,
-        xtick = {0,500,1000,1500,2000,2500,2500,3000,3500},
-        ytick = {0,200,400,600,800,1000,1200},
+        xmin = 0, xmax = 3200,
+        ymin = 0, ymax = 1100,
+        xtick = {0,400,800,1200,1600,2000,2400,2800,3200},
+        ytick = {0,100,200,300,400,500,600,700,800,900,1000,1100},
+        legend pos = south east,
+        ymajorgrids = true,
+        grid = major,
+        mark size = .7pt,
+        axis line style = ultra thin,
+        legend entries = {$Cheetah$, $Walker-Walk$, $Humanoid-Walk$, $Quadruped$,
+                        $Walker-Stand$, $Cartpole-Balance$, $Pendulum-Swingup$}
+    ]
+
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/031508-cheetah-run-eval.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/154418-walker-walk-eval.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/175732-humanoid-walk-eval.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/180549-quadruped-eval.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/190918-walker-stand-eval.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/191540-cartpole-balance-eval.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/201234-pendulum-swingup-eval.csv};
+
+    \end{axis}
+    \end{tikzpicture}
+
+    \begin{tikzpicture}
+    \begin{axis}[
+        title = {Hyperparameter Tuning on Walker Run: Actor Loss},
+        xlabel = {Episode},
+        ylabel = {Reward},
+        xmin = 0, xmax = 3200,
+        ymin = -175, ymax = 0,
+        xtick = {0,400,800,1200,1600,2000,2400,2800,3200},
+        ytick = {0,-25,-50,-75,-100,-125,-150,-175},
         legend pos = north east,
         ymajorgrids = true,
         grid = major,
-        legend entries = {$Cheetah$, $Human walk$, $Cartpole$, $walker run$, $walker run1$} % Hyper parameters for the plots below
+        mark size = .5pt,
+        axis line style = ultra thin,
+        legend entries = {$Control$, $Step-Linear$, $Lr:1e-2$, $Lr:1e-3$, $Adamw$}
     ]
 
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/cheetah_run_3090_eval_R.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/humanoid_walk_2420_eval_R.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/cartpole_balance_1090_eval_R.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/walker_run_1520_eval_R.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/walker_run_3090_eval_R.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/203408-walker-run-train-control.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/184403-walker-run-train-stepliner.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/215829-walker-run-train-1e-2.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/214858-walker-run-train-1e-3.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/222844-walker-run-train-Adamw.csv};
 
     \end{axis}
     \end{tikzpicture}
 
     \begin{tikzpicture}
     \begin{axis}[
-        title = {Training Tuning Hyperparameters on Walker Run for Reward by Epoch},
-        xlabel = {Epoch},
+        title = {Mujoco Environments: Actor Loss},
+        xlabel = {Episode},
         ylabel = {Reward},
-        xmin = 0, xmax = 3100,
-        ymin = -1000, ymax = 0,
-        xtick = {0,500,1000,1500,2000,2500,2500,3000,3500},
-        ytick = {-1000, -500, 0},
-        legend pos = north west,
-        ymajorgrids = true,
-        grid = major,
-        legend entries = {$A$, $B$, $C$}
-    ]
-
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/walker_run_3090_train_D.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/walker_run_2090_train_D.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/walker_run_1550_train_D.csv};
-
-    \end{axis}
-    \end{tikzpicture}
-
-    \begin{tikzpicture}
-    \begin{axis}[
-        title = {Training Varying Mujoco Environments using DrQ-v2},
-        xlabel = {Epoch},
-        ylabel = {Reward},
-        xmin = 0, xmax = 3100,
-        ymin = -1000, ymax = 0,
-        xtick = {0,500,1000,1500,2000,2500,2500,3000,3500},
-        ytick = {-1000, -500, 0},
+        xmin = 0, xmax = 3200,
+        ymin = -200, ymax = 0,
+        xtick = {0,400,800,1200,1600,2000,2400,2800,3200},
+        ytick = {0,-25,-50,-75,-100,-125,-150,-175,-200},
         legend pos = north east,
         ymajorgrids = true,
         grid = major,
-        legend entries = {$Cheetah$, $Human walk$, $Cartpole$, $walker run$, $walker run1$}
+        mark size = .5pt,
+        axis line style = ultra thin,
+        legend entries = {$Cheetah$, $Walker-Walk$, $Humanoid-Walk$, $Quadruped$,
+                        $Walker-Stand$, $Cartpole-Balance$, $Pendulum-Swingup$}
     ]
 
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/cheetah_run_3090_train_R.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/humanoid_walk_2420_train_R.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/cartpole_balance_1090_train_R.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/walker_run_1520_train_R.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/walker_run_3090_train_R.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/031508-cheetah-run-train.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/154418-walker-walk-train.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/175732-humanoid-walk-train.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/180549-quadruped-train.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/190918-walker-stand-train.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/191540-cartpole-balance-train.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/201234-pendulum-swingup-train.csv};
 
     \end{axis}
     \end{tikzpicture}
