@@ -46,15 +46,16 @@
 
     \begin{abstract}
         
-    Modern approaches to reinforcement learning (RL) are notorious for their extensive training times and complexity due, in part, 
-    to the necessary robustness of these systems in an uncertain environment space.\ As the problem space complexity continues to rise,
-    more efficient systems must be developed to deal with the exponential rise in training times.\ DrQ-v2 is the second iteration of an
-    off-policy actor-critic sampling algorithm which aims to efficiently model complex continuous systems with the help of data 
-    augmentation and notably uses single gpu architecture.\ DrQ-v2 focuses on solving visually continuous control through direct pixel
-    observation.\ This state-of-the-art algorithm is the first model free approach to be capable of direct pixel observation and solve
-    humanoid movement tasks in record time.\ In this paper we will highlight important components which contribute to its efficiency and
-    ingenuity, then proceed to perform an ablation study. 
-
+    Modern approaches to reinforcement learning (RL) are notorious for their extensive training times and complexity due, in
+    part, to the necessary robustness of these systems in an uncertain environment space.\ As the problem space complexity
+    continues to rise, more efficient systems must be developed to deal with the exponential rise in training times.\ DrQ-v2\cite{DrQv2}
+    is the second iteration of an off-policy actor-critic sampling algorithm which aims to efficiently model complex continuous
+    systems with the help of data augmentation and notably uses single gpu architecture.\ DrQ-v2 focuses on solving visually
+    continuous control through direct pixel observation.\ This state-of-the-art algorithm is the first model free approach to be
+    capable of direct pixel observation and solve humanoid movement tasks in record time.\ In this paper we will highlight
+    important components which contribute to its efficiency and ingenuity.\ We will then demonstrate our experiments which help
+    measure the effectiveness of this models's hyperparameters.\ Finally we will present the results of our ablation study which
+    demonstrate that DrQ-v2 is an exceptionally well tuned model and one that may democratize the reinforcement learning field.\
 
     \end{abstract}
 
@@ -63,59 +64,161 @@
     \end{IEEEkeywords}
 
     \section{Introduction}\label{sec:introduction}
-    Example citation: DrQ-v2 paper~\cite{yarats2021drqv2}.
 
-    Example citation: original paper~\cite{yarats2021image}.
+    %Example citation: DrQ-v2 paper~\cite{yarats2021drqv2}.
+    %Example citation: original paper~\cite{yarats2021image}.
+    %Example quotation: \enquote{This is important.}
+    %Example inline math with vector notation: \(\mathbf{w} = [1, 2, 3]\).
+    %Example math block:
+    %\[w = w - \eta \nabla f(w).\]
 
-    Example quotation: \enquote{This is important.}
+    Efficient sampling of high-dimensional data has been a long standing problem in the field of RL.\ Through recent advances in
+    sampling and data augmentation, DrQ-v2 has been able to solve complex humanoid tasks in a fraction of the time other models
+    would need.\ DreamerV2 \cite{DreamerV2} is one of these state-of-the-art models which has incorporated these recent advances.\
+    Despite this, it trains 4x slower than DrQ-v2 and requires a multi-gpu architecture.\ To understand this discrepancy in training
+    times we must look at the design decisions and the components which make up the model.\ It uses a range of different methods
+    to achieve its efficiency including a decay scheduler, data augmentation, sampling, improved replay buffer, and a deep
+    deterministic policy gradient (DDPG).\
+    The decay scheduler acts as a way of controlling the exploration rate of the model.\ Data augmentation in DrQ-v2 uses a litany
+    of methods including image flipping and cropping to ensure the model is properly generalizing the problem space.\ Sampling is
+    used to reduce the computational load by extracting 3 consecutive pixel observations at a time.\ This sampling efficiently
+    models the policy by capturing the minimal amount of information necessary to make improvements.\ The replay buffer has been
+    significantly updated  by expanding its size.\ This increase has directly improved performance by 3.5x due to an increase in
+    explored policy paths. Finally, and most notably, DrQ-v2 uses a DDPG to manage the rate of reward propagation.\ This process
+    for continuous systems  updates the critic by comparing the error from its network to that of the actor network error.\
+    While this model is state-of-the-art, with a range of optimizations, there appears to be further room for improvement in a
+    range of minor changes.\ The aim of this paper is thus to explore the inner mechanisms of DrQ-v2 and present additional
+    optimizations that may incur performance benefits to our training time and convergence.\ We will also explore methods such
+    as standard deviation tuning and learning rate scheduling to meet these goals.\
 
-    Example inline math with vector notation: \(\mathbf{w} = [1, 2, 3]\).
-
-    Example math block:
-
-    \[w = w - \eta \nabla f(w).\]
-
-    Efficient sampling of high-dimensional data has been a long-standing problem in the field of RL. Through recent advances in
-    sampling and data augmentation, DrQ-v2 has been able to solve complex humanoid tasks in a fraction of the time other models 
-    would need.\ DreamerV2 is one of these state-of-the-art models which has incorporated these recent advances.\ Despite this, it
-    trains 4x slower than DrQ-v2 and requires a multi-gpu architecture.\ To understand this discrepancy in training times we must
-    look at the design decisions and the components which make up the model.
-
-    DrQ-v2 uses a range of different methods to achieve its efficiency including a decay scheduler, sampling, improved replay buffer, 
-    and a deep deterministic policy gradient (DDPG).\ The decay scheduler acts as a way of controlling the exploration rate of the model.
-    Sampling is used to reduce the computational load by extracting 3 consecutive pixel observations at a time.\ The replay buffer has
-    been updated from their initial DrQ implementation and has resulted in their implementation being 3.5x faster.\ Finally, and most
-    notably, DrQ-v2 uses a DDPG to manage the rate of reward propagation.
-
-    While DrQ-v2 is a state-of-the-art model with a range of optimizations, there appears to be further room for improvement in a range 
-    of minor changes.\ The aim of this paper is thus to explore DrQ-v2 and present additional optimizations that may incur performance
-    benefits to our training time or convergence.\ We will explore methods such as standard deviation tuning and learning rate scheduling
-    in an attempt to improve DrQ-v2.
 
     \section{Problem Definition}\label{sec:problem-definition}
 
-    The stunning success of DrQ-v2, when compared to other state-of-the-art methods, warrants further exploration into the internal 
-    mechanisms.\ During this initial exploration we found certain components, such as hyperparameters and optimizers, which appeared
-    to have been unoptimized.\ With this understanding we began to formulate experiments we could conduct on the HPC which may offer
-    some improvement to the base model.\ The following sections will demonstrate our attempts at improving training times and convergence
-    rates given the already highly optimized design.
+    The stunning success of DrQ-v2, when compared to other state-of-the-art methods, warrants further exploration into its
+    components.\ During this initial exploration we found certain design decisions, such as hyperparameters and optimizers, which
+    appeared to have been left unoptimized.\ With this understanding we began to formulate experiments we could conduct on DrQ-v2
+    which may offer some improvement to the base model.\ The following sections will demonstrate our attempts at improving
+    training times and convergence rates given the already highly optimized design.\ We use San Jose State University’s HPC,
+    which uses an Intel Xeon E5-2660 and an NVIDIA Tesla P100, to conduct our tests over 48 hour time intervals.\ Due to the
+    computational efficiency of DrQ-v2, we expect this hardware to induce convergence.\
 
     \section{Methodology}\label{sec:methodology}
 
+    DrQ-v2 has been demonstrated to achieve state-of-the-art results on a number of mujoco environments.\ As a result it is
+    important to dissect the model apart and understand how it operates.\ In order to do this we must first explore the structure
+    of the code.\ Once the code structure is understood, we will begin the ablation study by testing DrQ-v2 in multiple
+    environments.\ We test a number of mujoco environments which are challenging enough to test the abilities of our model while
+    maintaining the prospect of convergence within our 48 hour window.\ After selecting a promising environment, we will set a
+    control run and tweak components in an iterative process.\ This will cleanly communicate if any adjustments to the model's
+    components will provide additional performance gains not present in the initial implementation of DrQ-v2.\
+
+    \section{Experiments}\label{sec:experiments}
+
+    When studying the code and reading through the paper we noticed a few interesting points where optimization could be done.
+    Particularly we focused on the learning rate, the optimizer, and the standard deviation scheduler.\ These components were
+    selected in part due to their limited impact on every other component.\ To begin our experiments we must first find a mujoco
+    environment which balanced complexity and convergence.\ Following this we began by creating a control test and attempting to
+    improve from that starting point.\ We tweak many different hyperparameters, in a multitude of ways, in an attempt to build a
+    stronger model.\ In the following sections we detail the theory and the results of these experiments.\
+
+    Mujoco contains many different environments with varying degrees of difficulty which we can use to assess the abilities of DrQ-v2.\
+    We began by testing random environments before noticing that we would not be able to see convergence in environments with
+    considerable dimensionality due to resource restrictions.\ This is because the results published in the DrQ-v2 paper uses a
+    better GPU and likely has updated software.\ With our implementation using SJSU’s HPC we are limited by what is available on
+    these systems.\ Figure 1 demonstrates the rewards of these initial experiments, while Figure 2 demonstrates the actor loss at
+    each step.\
+
+    % Figure 1
     \begin{tikzpicture}
-    \begin{axis}[
-        title = {Hyperparameter Tuning on Walker Run: Reward},
+        \begin{axis}[
+        scale = .8,
+        title = {Mujoco Environments: Reward},
         xlabel = {Episode},
         ylabel = {Reward},
         xmin = 0, xmax = 3200,
-        ymin = 0, ymax = 800,
-        xtick = {0,400,800,1200,1600,2000,2400,2800,3200},
-        ytick = {0,100,200,300,400,500,600,700,800,900},
+        ymin = 0, ymax = 1050,
+        xtick = {0,800,1600,2400,3200},
+        ytick = {0,150,300,450,600,750,900,1050},
         legend pos = south east,
         ymajorgrids = true,
         grid = major,
         mark size = .7pt,
         axis line style = ultra thin,
+        legend style = {nodes = {scale = 0.75, transform shape}},
+        legend entries = {$Walker Run$, $Cheetah$, $Walker Walk$, $Humanoid Walk$, $Quadruped$,
+                        $Walker Stand$, $Cartpole Balance$, $Pendulum Swingup$}
+        ]
+
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/203408-walker-run-eval-control.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/031508-cheetah-run-eval.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/154418-walker-walk-eval.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/175732-humanoid-walk-eval.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/180549-quadruped-eval.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/190918-walker-stand-eval.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/191540-cartpole-balance-eval.csv};
+    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/201234-pendulum-swingup-eval.csv};
+
+    \end{axis}
+    \end{tikzpicture}
+
+    % Figure 2
+    \begin{tikzpicture}
+    \begin{axis}[
+        scale = .8,
+        title = {Mujoco Environments: Actor Loss},
+        xlabel = {Episode},
+        ylabel = {Actor Loss},
+        xmin = 0, xmax = 3200,
+        ymin = -200, ymax = 0,
+        xtick = {0,800,1600,2400,3200},
+        ytick = {0,-25,-50,-75,-100,-125,-150,-175,-200},
+        legend pos = north east,
+        ymajorgrids = true,
+        grid = major,
+        mark size = .5pt,
+        axis line style = ultra thin,
+        legend style = {nodes = {scale = 0.75, transform shape}},
+        legend entries = {$Walker Run$, $Cheetah$, $Walker Walk$, $Humanoid Walk$, $Quadruped$,
+                        $Walker Stand$, $Cartpole Balance$, $Pendulum Swingup$}
+    ]
+
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/203408-walker-run-train-control.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/031508-cheetah-run-train.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/154418-walker-walk-train.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/175732-humanoid-walk-train.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/180549-quadruped-train.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/190918-walker-stand-train.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/191540-cartpole-balance-train.csv};
+    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/201234-pendulum-swingup-train.csv};
+
+    \end{axis}
+    \end{tikzpicture}
+
+
+        This visualization demonstrates that walker run is the best balance between convergence and difficulty.\ Other environments
+        such as Cheetah and Pendulum Swingup converge too rapidly to test and tune hyper parameters in a meaningful way.\ As a
+        result we used walker run as our control environment and began to test different hyperparameters.\ We tested walker run
+        on different learning rates, optimizers, and standard deviation schedulers.\
+
+    \section{Results}\label{sec:results}
+
+    % Figure 3
+    \begin{tikzpicture}
+    \begin{axis}[
+        scale = .8,
+        title = {Walker Run Hyperparameter Tuning: Reward},
+        xlabel = {Episode},
+        ylabel = {Reward},
+        xmin = 0, xmax = 3200,
+        ymin = 0, ymax = 800,
+        xtick = {0,800,1600,2400,3200},
+        ytick = {0,200,400,600,800},
+        legend pos = south east,
+        ymajorgrids = true,
+        grid = major,
+        mark size = .7pt,
+        axis line style = ultra thin,
+        legend style = {nodes = {scale = 0.9, transform shape}},
         legend entries = {$Control$, $Step-Linear$, $Lr:1e-2$, $Lr:1e-3$, $Adamw$}
     ]
 
@@ -128,50 +231,24 @@
     \end{axis}
     \end{tikzpicture}
 
+    % Figure 4
     \begin{tikzpicture}
     \begin{axis}[
-        title = {Mujoco Environments: Reward},
+        scale = .75,
+        title = {Walker Run Hyperparameter Tuning: Actor Loss},
         xlabel = {Episode},
-        ylabel = {Reward},
+        ylabel = {Actor Loss},
         xmin = 0, xmax = 3200,
-        ymin = 0, ymax = 1100,
-        xtick = {0,400,800,1200,1600,2000,2400,2800,3200},
-        ytick = {0,100,200,300,400,500,600,700,800,900,1000,1100},
-        legend pos = south east,
-        ymajorgrids = true,
-        grid = major,
-        mark size = .7pt,
-        axis line style = ultra thin,
-        legend entries = {$Cheetah$, $Walker-Walk$, $Humanoid-Walk$, $Quadruped$,
-                        $Walker-Stand$, $Cartpole-Balance$, $Pendulum-Swingup$}
-    ]
-
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/031508-cheetah-run-eval.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/154418-walker-walk-eval.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/175732-humanoid-walk-eval.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/180549-quadruped-eval.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/190918-walker-stand-eval.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/191540-cartpole-balance-eval.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/201234-pendulum-swingup-eval.csv};
-
-    \end{axis}
-    \end{tikzpicture}
-
-    \begin{tikzpicture}
-    \begin{axis}[
-        title = {Hyperparameter Tuning on Walker Run: Actor Loss},
-        xlabel = {Episode},
-        ylabel = {Reward},
-        xmin = 0, xmax = 3200,
-        ymin = -175, ymax = 0,
-        xtick = {0,400,800,1200,1600,2000,2400,2800,3200},
+        ymin = -165, ymax = 0,
+        xtick = {0,800,1600,2400,3200},
         ytick = {0,-25,-50,-75,-100,-125,-150,-175},
         legend pos = north east,
         ymajorgrids = true,
         grid = major,
         mark size = .5pt,
         axis line style = ultra thin,
-        legend entries = {$Control$, $Step-Linear$, $Lr:1e-2$, $Lr:1e-3$, $Adamw$}
+        legend style = {nodes = {scale = 0.9, transform shape}},
+        legend entries = {$Control$, $StepLinear$, $Lr:1e-2$, $Lr:1e-3$, $Adamw$}
     ]
 
     \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/203408-walker-run-train-control.csv};
@@ -183,42 +260,41 @@
     \end{axis}
     \end{tikzpicture}
 
-    \begin{tikzpicture}
-    \begin{axis}[
-        title = {Mujoco Environments: Actor Loss},
-        xlabel = {Episode},
-        ylabel = {Reward},
-        xmin = 0, xmax = 3200,
-        ymin = -200, ymax = 0,
-        xtick = {0,400,800,1200,1600,2000,2400,2800,3200},
-        ytick = {0,-25,-50,-75,-100,-125,-150,-175,-200},
-        legend pos = north east,
-        ymajorgrids = true,
-        grid = major,
-        mark size = .5pt,
-        axis line style = ultra thin,
-        legend entries = {$Cheetah$, $Walker-Walk$, $Humanoid-Walk$, $Quadruped$,
-                        $Walker-Stand$, $Cartpole-Balance$, $Pendulum-Swingup$}
-    ]
+    Figures 3 and 4 demonstrate that this ablation study could not achieve better performance than the initial control model, in
+    the long term.\ We find that adjusting the learning rates destroyed the tractability of our model as it was unable to learn
+    during its training.\ We tested a total of three learning rates, including a learning rate scheduler which did not run despite
+    using the HPC resources.\ We believe this is the result of using learning rates that were too large for the environment space.\
+    Lowering these may have provided better results.\
 
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/031508-cheetah-run-train.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/154418-walker-walk-train.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/175732-humanoid-walk-train.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/180549-quadruped-train.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/190918-walker-stand-train.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/191540-cartpole-balance-train.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/201234-pendulum-swingup-train.csv};
+    With respect to the optimizer, AdamW, we found that our model performed slightly worse than the control runs using the Adam
+    optimizer.\ We believe this discrepancy is due AdamW being more robust and thus more conservative in its approach to learning.\
+    This results in AdamW gaining faster convergence for the first few hundred runs and inevitably causes AdamW to perform
+    slightly worse in the long term.\ With enough time however, we would expect to find that AdamW converges to the same rewards
+    as the control even if it needs more time.\
 
-    \end{axis}
-    \end{tikzpicture}
+    The final hyperparameter we tuned was that of the standard deviation scheduler.\ The theory describes that as learning
+    progresses in the policy, the variation should become smaller.\ This is because over time we are more likely to find a more
+    optimal policy.\ This allows the reinforcement of these optimal policies by diminishing the variations between training runs.\
+    In our experiments we changed the scheduler by decreasing the variation as the policy progressed.\  We find that these changes
+    improved convergence time, but did not achieve final accuracies better than that of our control run.\ Despite this, we
+    believe this hyper parameter is the least optimized mechanism in the system.\
 
-    \section{Experiments}\label{sec:experiments}
+    We find that some of our experiments were able to converge to a nearly optimal policy quicker than that of the
+    control.\ However, as the training continues, the hyper parameters proposed by the DrQ-v2 researchers converge to an optimal
+    quicker.\ We believe that with better hardware and updated software on SJSU's HPC we may have been able to see strictly better
+    convergence and training times with our proposed hyperparameter adjustments.\ Despite our limited resources, we were able to
+    briefly improve convergence times and demonstrate some of the many hyper parameters which can be tuned in DrQ-v2.\
 
-    TODO
 
     \section{Conclusion}\label{sec:conclusion}
 
-    TODO
+    This ablation study provided meaningful insight into the mechanisms that make DrQ-v2 a state-of-the-art model.\ The efficiency
+    and ingenuity of this model is necessary to provide the significant breakthrough in direct pixel observation we see.\ In all,
+    while our experiments to improve the DrQ-v2 failed, we found potential areas of interest, such as the standard deviation
+    scheduler, which may offer significant improvements.\ Through a culmination of many optimizations, DrQ-v2 has become a
+    reinforcement learning tool capable of democratizing the field.\ Its lightweight architecture and fast training times makes
+    this algorithm a gold standard for future reinforcement learning work to build from.\ Future work may find significant success
+    in the development of a strong learning rate scheduler and improvements to the standard deviation scheduler.\
 
     \bibliography{main}
     \bibliographystyle{ieeetr}
