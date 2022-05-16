@@ -48,7 +48,7 @@
         
     Modern approaches to reinforcement learning (RL) are notorious for their extensive training times and complexity due, in
     part, to the necessary robustness of these systems in an uncertain environment space.\ As the problem space complexity
-    continues to rise, more efficient systems must be developed to deal with the exponential rise in training times.\ DrQ-v2\cite{DrQv2}
+    continues to rise, more efficient systems must be developed to deal with the exponential rise in training times.\ DrQ-v2 \cite{DrQv2}
     is the second iteration of an off-policy actor-critic sampling algorithm which aims to efficiently model complex continuous
     systems with the help of data augmentation and notably uses single gpu architecture.\ DrQ-v2 focuses on solving visually
     continuous control through direct pixel observation.\ This state-of-the-art algorithm is the first model free approach to be
@@ -60,16 +60,15 @@
     \end{abstract}
 
     \begin{IEEEkeywords}
-        reinforcement learning, actor-critic, PPO
+        DrQ-v2, Actor-Critic, Pixel Observation, PPO
     \end{IEEEkeywords}
 
     \section{Introduction}\label{sec:introduction}
 
-    %Example citation: DrQ-v2 paper~\cite{yarats2021drqv2}.
-    %Example citation: original paper~\cite{yarats2021image}.
-    %Example quotation: \enquote{This is important.}
-    %Example inline math with vector notation: \(\mathbf{w} = [1, 2, 3]\).
-    %Example math block:
+    Example citation: original paper~\cite{yarats2021image}.
+    Example quotation: \enquote{This is important.}
+    Example inline math with vector notation: \(\mathbf{w} = [1, 2, 3]\).
+    Example math block:
     %\[w = w - \eta \nabla f(w).\]
 
     Efficient sampling of high-dimensional data has been a long standing problem in the field of RL.\ Through recent advances in
@@ -129,6 +128,7 @@
     each step.\
 
     % Figure 1
+    \begin{figure}[h!]
     \begin{tikzpicture}
         \begin{axis}[
         scale = .8,
@@ -149,19 +149,23 @@
                         $Walker Stand$, $Cartpole Balance$, $Pendulum Swingup$}
         ]
 
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/203408-walker-run-eval-control.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/031508-cheetah-run-eval.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/154418-walker-walk-eval.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/175732-humanoid-walk-eval.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/180549-quadruped-eval.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/190918-walker-stand-eval.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/191540-cartpole-balance-eval.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{others/201234-pendulum-swingup-eval.csv};
+    \addplot [color = blue, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{experiments/203408-walker-run-eval-control.csv};
+    \addplot [color = red, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{others/031508-cheetah-run-eval.csv};
+    \addplot [color = cyan, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{others/154418-walker-walk-eval.csv};
+    \addplot [color = gray, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{others/175732-humanoid-walk-eval.csv};
+    \addplot [color = black, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{others/180549-quadruped-eval.csv};
+    \addplot [color = orange, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{others/190918-walker-stand-eval.csv};
+    \addplot [color = purple, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{others/191540-cartpole-balance-eval.csv};
+    \addplot [color = green, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{others/201234-pendulum-swingup-eval.csv};
 
     \end{axis}
     \end{tikzpicture}
+        \caption{}
+    \end{figure}
+
 
     % Figure 2
+    \begin{figure}[h!]
     \begin{tikzpicture}
     \begin{axis}[
         scale = .8,
@@ -182,83 +186,26 @@
                         $Walker Stand$, $Cartpole Balance$, $Pendulum Swingup$}
     ]
 
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/203408-walker-run-train-control.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/031508-cheetah-run-train.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/154418-walker-walk-train.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/175732-humanoid-walk-train.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/180549-quadruped-train.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/190918-walker-stand-train.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/191540-cartpole-balance-train.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{others/201234-pendulum-swingup-train.csv};
+    \addplot [color = blue, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/203408-walker-run-train-control.csv};
+    \addplot [color = red, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{others/031508-cheetah-run-train.csv};
+    \addplot [color = cyan, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{others/154418-walker-walk-train.csv};
+    \addplot [color = gray, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{others/175732-humanoid-walk-train.csv};
+    \addplot [color = black, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{others/180549-quadruped-train.csv};
+    \addplot [color = orange, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{others/190918-walker-stand-train.csv};
+    \addplot [color = purple, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{others/191540-cartpole-balance-train.csv};
+    \addplot [color = green, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{others/201234-pendulum-swingup-train.csv};
 
     \end{axis}
     \end{tikzpicture}
+        \caption{}
+    \end{figure}
 
-
-        This visualization demonstrates that walker run is the best balance between convergence and difficulty.\ Other environments
-        such as Cheetah and Pendulum Swingup converge too rapidly to test and tune hyper parameters in a meaningful way.\ As a
-        result we used walker run as our control environment and began to test different hyperparameters.\ We tested walker run
-        on different learning rates, optimizers, and standard deviation schedulers.\
+    This visualization demonstrates that walker run is the best balance between convergence and difficulty.\ Other environments
+    such as Cheetah and Pendulum Swingup converge too rapidly to test and tune hyper parameters in a meaningful way.\ As a
+    result we used walker run as our control environment and began to test different hyperparameters.\ We tested walker run
+    on different learning rates, optimizers, and standard deviation schedulers.\
 
     \section{Results}\label{sec:results}
-
-    % Figure 3
-    \begin{tikzpicture}
-    \begin{axis}[
-        scale = .8,
-        title = {Walker Run Hyperparameter Tuning: Reward},
-        xlabel = {Episode},
-        ylabel = {Reward},
-        xmin = 0, xmax = 3200,
-        ymin = 0, ymax = 800,
-        xtick = {0,800,1600,2400,3200},
-        ytick = {0,200,400,600,800},
-        legend pos = south east,
-        ymajorgrids = true,
-        grid = major,
-        mark size = .7pt,
-        axis line style = ultra thin,
-        legend style = {nodes = {scale = 0.9, transform shape}},
-        legend entries = {$Control$, $Step-Linear$, $Lr:1e-2$, $Lr:1e-3$, $Adamw$}
-    ]
-
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/203408-walker-run-eval-control.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/184403-walker-run-eval-stepliner.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/215829-walker-run-eval-1e-2.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/214858-walker-run-eval-1e-3.csv};
-    \addplot table [x = episode, y = episode_reward, col sep = comma]{experiments/222844-walker-run-eval-Adamw.csv};
-
-    \end{axis}
-    \end{tikzpicture}
-
-    % Figure 4
-    \begin{tikzpicture}
-    \begin{axis}[
-        scale = .75,
-        title = {Walker Run Hyperparameter Tuning: Actor Loss},
-        xlabel = {Episode},
-        ylabel = {Actor Loss},
-        xmin = 0, xmax = 3200,
-        ymin = -165, ymax = 0,
-        xtick = {0,800,1600,2400,3200},
-        ytick = {0,-25,-50,-75,-100,-125,-150,-175},
-        legend pos = north east,
-        ymajorgrids = true,
-        grid = major,
-        mark size = .5pt,
-        axis line style = ultra thin,
-        legend style = {nodes = {scale = 0.9, transform shape}},
-        legend entries = {$Control$, $StepLinear$, $Lr:1e-2$, $Lr:1e-3$, $Adamw$}
-    ]
-
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/203408-walker-run-train-control.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/184403-walker-run-train-stepliner.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/215829-walker-run-train-1e-2.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/214858-walker-run-train-1e-3.csv};
-    \addplot table [x = episode, y = actor_loss, col sep = comma]{experiments/222844-walker-run-train-Adamw.csv};
-
-    \end{axis}
-    \end{tikzpicture}
 
     Figures 3 and 4 demonstrate that this ablation study could not achieve better performance than the initial control model, in
     the long term.\ We find that adjusting the learning rates destroyed the tractability of our model as it was unable to learn
@@ -285,6 +232,69 @@
     convergence and training times with our proposed hyperparameter adjustments.\ Despite our limited resources, we were able to
     briefly improve convergence times and demonstrate some of the many hyper parameters which can be tuned in DrQ-v2.\
 
+    % Figure 3
+    \begin{figure}[h!]
+    \begin{tikzpicture}
+    \begin{axis}[
+        scale = .8,
+        title = {Walker Run Hyperparameter Tuning: Reward},
+        xlabel = {Episode},
+        ylabel = {Reward},
+        xmin = 0, xmax = 3200,
+        ymin = 0, ymax = 800,
+        xtick = {0,800,1600,2400,3200},
+        ytick = {0,200,400,600,800},
+        legend pos = south east,
+        ymajorgrids = true,
+        grid = major,
+        mark size = .7pt,
+        axis line style = ultra thin,
+        legend style = {nodes = {scale = 0.9, transform shape}},
+        legend entries = {$Control$, $Step-Linear$, $Lr:1e-2$, $Lr:1e-3$, $Adamw$}
+    ]
+
+    \addplot [color = blue, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{experiments/203408-walker-run-eval-control.csv};
+    \addplot [color = red, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{experiments/184403-walker-run-eval-stepliner.csv};
+    \addplot [color = black, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{experiments/215829-walker-run-eval-1e-2.csv};
+    \addplot [color = green, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{experiments/214858-walker-run-eval-1e-3.csv};
+    \addplot [color = orange, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{experiments/222844-walker-run-eval-Adamw.csv};
+
+    \end{axis}
+    \end{tikzpicture}
+        \caption{}
+    \end{figure}
+
+    % Figure 4
+    \begin{figure}[h!]
+    \begin{tikzpicture}
+    \begin{axis}[
+        scale = .75,
+        title = {Walker Run Hyperparameter Tuning: Actor Loss},
+        xlabel = {Episode},
+        ylabel = {Actor Loss},
+        xmin = 0, xmax = 3200,
+        ymin = -165, ymax = 0,
+        xtick = {0,800,1600,2400,3200},
+        ytick = {0,-25,-50,-75,-100,-125,-150,-175},
+        legend pos = north east,
+        ymajorgrids = true,
+        grid = major,
+        mark size = .5pt,
+        axis line style = ultra thin,
+        legend style = {nodes = {scale = 0.9, transform shape}},
+        legend entries = {$Control$, $StepLinear$, $Lr:1e-2$, $Lr:1e-3$, $Adamw$}
+    ]
+
+    \addplot [color = blue, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/203408-walker-run-train-control.csv};
+    \addplot [color = red, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/184403-walker-run-train-stepliner.csv};
+    \addplot [color = black, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/215829-walker-run-train-1e-2.csv};
+    \addplot [color = green, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/214858-walker-run-train-1e-3.csv};
+    \addplot [color = orange, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/222844-walker-run-train-Adamw.csv};
+
+    \end{axis}
+    \end{tikzpicture}
+        \caption{}
+    \end{figure}
 
     \section{Conclusion}\label{sec:conclusion}
 
@@ -296,6 +306,6 @@
     this algorithm a gold standard for future reinforcement learning work to build from.\ Future work may find significant success
     in the development of a strong learning rate scheduler and improvements to the standard deviation scheduler.\
 
-    \bibliography{main}
     \bibliographystyle{ieeetr}
+    \bibliography{main}
 \end{document}
