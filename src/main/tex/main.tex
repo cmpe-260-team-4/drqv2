@@ -46,16 +46,16 @@
 
     \begin{abstract}
         
-    Modern approaches to reinforcement learning (RL) are notorious for their extensive training times and complexity due, in
-    part, to the necessary robustness of these systems in an uncertain environment space.\ As the problem space complexity
-    continues to rise, more efficient systems must be developed to deal with the exponential rise in training times.\ DrQ-v2 \cite{DrQv2}
-    is the second iteration of an off-policy actor-critic sampling algorithm which aims to efficiently model complex continuous
-    systems with the help of data augmentation and notably uses single gpu architecture.\ DrQ-v2 focuses on solving visually
-    continuous control through direct pixel observation.\ This state-of-the-art algorithm is the first model free approach to be
-    capable of direct pixel observation and solve humanoid movement tasks in record time.\ In this paper we will highlight
-    important components which contribute to its efficiency and ingenuity.\ We will then demonstrate our experiments which help
-    measure the effectiveness of this models's hyperparameters.\ Finally we will present the results of our ablation study which
-    demonstrate that DrQ-v2 is an exceptionally well tuned model and one that may democratize the reinforcement learning field.\
+    Modern approaches to reinforcement learning (RL) are notorious for their extensive training times and complexity. The uncertain
+    environment space necessitates the use of robust system design.\ As the complexity of the problem space rises, more efficient
+    systems must be developed to improve training times. \ DrQ-v2~\cite{DrQv2} is the second iteration of an off-policy actor-critic
+    sampling algorithm which aims to efficiently model complex continuous systems. This is done with the help of data augmentation
+    techniques and notably only uses a single gpu to run the model.\ DrQ-v2 focuses on solving visually continuous control through
+    direct pixel observation.\ \enquote{Furthermore, DrQ-v2 is able to solve complex humanoid locomotion tasks directly from pixel
+    observations, previously unattained by model-free RL.}~\cite{DrQv2} In this paper we will highlight important components
+    which contribute the efficiency and ingenuity of the model.\ We will then demonstrate our experiments to measure the effectiveness
+    DrQ-v2's hyperparameters.\ Finally, we will present the results of our ablation study which demonstrate that DrQ-v2 is
+    an exceptionally well tuned model and one that may democratize the reinforcement learning field.\
 
     \end{abstract}
 
@@ -65,70 +65,68 @@
 
     \section{Introduction}\label{sec:introduction}
 
-    Example citation: original paper~\cite{yarats2021image}.
-    Example quotation: \enquote{This is important.}
-    Example inline math with vector notation: \(\mathbf{w} = [1, 2, 3]\).
-    Example math block:
+
+    %Example inline math with vector notation: \(\mathbf{w} = [1, 2, 3]\).
+    %Example math block:
     %\[w = w - \eta \nabla f(w).\]
 
     Efficient sampling of high-dimensional data has been a long standing problem in the field of RL.\ Through recent advances in
     sampling and data augmentation, DrQ-v2 has been able to solve complex humanoid tasks in a fraction of the time other models
-    would need.\ DreamerV2 \cite{DreamerV2} is one of these state-of-the-art models which has incorporated these recent advances.\
-    Despite this, it trains 4x slower than DrQ-v2 and requires a multi-gpu architecture.\ To understand this discrepancy in training
-    times we must look at the design decisions and the components which make up the model.\ It uses a range of different methods
-    to achieve its efficiency including a decay scheduler, data augmentation, sampling, improved replay buffer, and a deep
-    deterministic policy gradient (DDPG).\
-    The decay scheduler acts as a way of controlling the exploration rate of the model.\ Data augmentation in DrQ-v2 uses a litany
-    of methods including image flipping and cropping to ensure the model is properly generalizing the problem space.\ Sampling is
-    used to reduce the computational load by extracting 3 consecutive pixel observations at a time.\ This sampling efficiently
-    models the policy by capturing the minimal amount of information necessary to make improvements.\ The replay buffer has been
-    significantly updated  by expanding its size.\ This increase has directly improved performance by 3.5x due to an increase in
-    explored policy paths. Finally, and most notably, DrQ-v2 uses a DDPG to manage the rate of reward propagation.\ This process
-    for continuous systems  updates the critic by comparing the error from its network to that of the actor network error.\
-    While this model is state-of-the-art, with a range of optimizations, there appears to be further room for improvement in a
-    range of minor changes.\ The aim of this paper is thus to explore the inner mechanisms of DrQ-v2 and present additional
-    optimizations that may incur performance benefits to our training time and convergence.\ We will also explore methods such
-    as standard deviation tuning and learning rate scheduling to meet these goals.\
+    would need.\ DreamerV2~\cite{DreamerV2} is another recent state-of-the-art model which has incorporated these same recent advancements.\
+    Despite this, it trains 4x slower than DrQ-v2 and requires a multiple gpus.\ To understand this discrepancy in training
+    times, we must study the design decisions and components.\ They use a range of methods to achieve their efficiency including
+    a decay scheduler, data augmentation, sampling, an improved replay buffer, and deep deterministic policy gradient (DDPG) to
+    improve reward shaping.\
+    The decay scheduler acts as a way of controlling the exploration rate within the model.\ Data augmentation in DrQ-v2 consists
+    of image flipping, cropping, and padding to ensure the model is properly generalizing the problem space.\ Sampling is done
+    to reduce the computational load by extracting three consecutive pixel observations at a time.\ This sampling efficiently
+    models the policy without the use of importance sampling. \ The replay buffer has been significantly updated by expanding its
+    size.\ This increase has directly improved performance by 3.5x due to increasing the explored policy paths.\ Finally, and most
+    notably, DrQ-v2 uses a DDPG to manage the rate of reward propagation.\ This process updates the critic by comparing the error
+    from its network to that of the actor network error.\
+    While this model is state-of-the-art, there appears to be further room for improvement in a range of hyperparameter changes.\
+    The aim of this paper is thus to explore the inner mechanisms of DrQ-v2 and present additional optimizations which may incur
+    performance benefits to training times and convergence.\ These methods include standard deviation tuning and
+    learning rate scheduling.\ While we were not successful at improving DrQ-v2's long term results, we did manage to explore
+    its mechanisms and offer potential future work.
 
 
     \section{Problem Definition}\label{sec:problem-definition}
 
-    The stunning success of DrQ-v2, when compared to other state-of-the-art methods, warrants further exploration into its
-    components.\ During this initial exploration we found certain design decisions, such as hyperparameters and optimizers, which
-    appeared to have been left unoptimized.\ With this understanding we began to formulate experiments we could conduct on DrQ-v2
-    which may offer some improvement to the base model.\ The following sections will demonstrate our attempts at improving
-    training times and convergence rates given the already highly optimized design.\ We use San Jose State University’s HPC,
-    which uses an Intel Xeon E5-2660 and an NVIDIA Tesla P100, to conduct our tests over 48 hour time intervals.\ Due to the
-    computational efficiency of DrQ-v2, we expect this hardware to induce convergence.\
+    When compared to other state-of-the-art methods, DrQ-v2 warrants further study into its decision decisions.\ During our preliminary
+    exploration we found certain hyperparameters which appear to offer potential performance benefits with fine tuning.\ With
+    this understanding, we formulated potential experiments which could offer some improvement to the base model.\ The following sections will demonstrate our attempts at improving
+    training times and convergence rates given the already highly optimized design of DrQ-v2.\ We use San Jose State University’s HPC,
+    which uses an Intel Xeon E5-2660 and an NVIDIA Tesla P100, to conduct our tests over 48 hour time intervals.\
 
     \section{Methodology}\label{sec:methodology}
 
-    DrQ-v2 has been demonstrated to achieve state-of-the-art results on a number of mujoco environments.\ As a result it is
-    important to dissect the model apart and understand how it operates.\ In order to do this we must first explore the structure
-    of the code.\ Once the code structure is understood, we will begin the ablation study by testing DrQ-v2 in multiple
-    environments.\ We test a number of mujoco environments which are challenging enough to test the abilities of our model while
-    maintaining the prospect of convergence within our 48 hour window.\ After selecting a promising environment, we will set a
-    control run and tweak components in an iterative process.\ This will cleanly communicate if any adjustments to the model's
-    components will provide additional performance gains not present in the initial implementation of DrQ-v2.\
+    DrQ-v2 has been demonstrated to achieve state-of-the-art results on a number of mujoco environments.\ We explore this success
+    by performing an ablation study on the code and running our own tests to ensure validity. We test DrQ-v2 in multiple
+    environments including cheetah run, cartpole balance, and humanoid walk.\ We test these mujoco environments to ensure they
+    are challenging enough to test the abilities of our model while also maintaining the ability to converge within our 48 hour
+    time limit.\ After selecting a promising environment, we set a control run and tweak components in an iterative process.\
+    This processes will demonstrate if any adjustments to the model's components provide additional performance improvements which
+    are not present in DrQ-v2.\
 
     \section{Experiments}\label{sec:experiments}
 
     When studying the code and reading through the paper we noticed a few interesting points where optimization could be done.
-    Particularly we focused on the learning rate, the optimizer, and the standard deviation scheduler.\ These components were
-    selected in part due to their limited impact on every other component.\ To begin our experiments we must first find a mujoco
-    environment which balanced complexity and convergence.\ Following this we began by creating a control test and attempting to
-    improve from that starting point.\ We tweak many different hyperparameters, in a multitude of ways, in an attempt to build a
-    stronger model.\ In the following sections we detail the theory and the results of these experiments.\
+    Particularly we focused on the learning rate, optimizer, and standard deviation scheduler.\ These components were
+    selected due to their minimal influence on other components.\ To begin our experiments we must first find a mujoco
+    environment which balances complexity and convergence.\ We then create a control test and attempt to improve from that policy.\
+    We tweak the hyperparameters in an iterative process and record the results of the experiment.\ In the following section we
+    detail these results.\
 
-    Mujoco contains many different environments with varying degrees of difficulty which we can use to assess the abilities of DrQ-v2.\
-    We began by testing random environments before noticing that we would not be able to see convergence in environments with
-    considerable dimensionality due to resource restrictions.\ This is because the results published in the DrQ-v2 paper uses a
-    better GPU and likely has updated software.\ With our implementation using SJSU’s HPC we are limited by what is available on
-    these systems.\ Figure 1 demonstrates the rewards of these initial experiments, while Figure 2 demonstrates the actor loss at
-    each step.\
+    Mujoco environments vary with three degrees of difficulty and can be used to assess the strength of a model.\
+    In this we found and eliminated every "hard" environment due to their considerable dimensionality and our resource restrictions.\
+    The DrQ-v2 researchers were capable of finding convergence in some of these environments, likely due to their extensive resources.\
+    With our implementation using SJSU’s HPC we are limited by what is available on these systems.\ Despite this, we were able to
+    select and train numerous models. Figure 1 demonstrates the rewards gained by each environment we tested while figure 2
+    demonstrates the actor loss.\
 
     % Figure 1
-    \begin{figure}[h!]
+    \begin{figure}[!ht]
     \begin{tikzpicture}
         \begin{axis}[
         scale = .8,
@@ -165,7 +163,7 @@
 
 
     % Figure 2
-    \begin{figure}[h!]
+    \begin{figure}[!ht]
     \begin{tikzpicture}
     \begin{axis}[
         scale = .8,
@@ -200,40 +198,16 @@
         \caption{}
     \end{figure}
 
-    This visualization demonstrates that walker run is the best balance between convergence and difficulty.\ Other environments
-    such as Cheetah and Pendulum Swingup converge too rapidly to test and tune hyper parameters in a meaningful way.\ As a
-    result we used walker run as our control environment and began to test different hyperparameters.\ We tested walker run
-    on different learning rates, optimizers, and standard deviation schedulers.\
+    Figures 1 and 2 both demonstrate that walker run is the best balance between convergence and complexity.\ Other environments,
+    such as Cheetah and Pendulum Swingup, converge too rapidly or not rapidly enough.\ This would prevent adequate visualization
+    regarding the performance of our hyper parameter manipulations. We test the strength of our hyper parameter adjusments using
+    the walker run environment. We perform our ablation study by manipulating the learning rates, optimizers, and standard
+    deviation schedulers in an attempt to improve on the hyper parameters of the control run.\
 
     \section{Results}\label{sec:results}
 
-    Figures 3 and 4 demonstrate that this ablation study could not achieve better performance than the initial control model, in
-    the long term.\ We find that adjusting the learning rates destroyed the tractability of our model as it was unable to learn
-    during its training.\ We tested a total of three learning rates, including a learning rate scheduler which did not run despite
-    using the HPC resources.\ We believe this is the result of using learning rates that were too large for the environment space.\
-    Lowering these may have provided better results.\
-
-    With respect to the optimizer, AdamW, we found that our model performed slightly worse than the control runs using the Adam
-    optimizer.\ We believe this discrepancy is due AdamW being more robust and thus more conservative in its approach to learning.\
-    This results in AdamW gaining faster convergence for the first few hundred runs and inevitably causes AdamW to perform
-    slightly worse in the long term.\ With enough time however, we would expect to find that AdamW converges to the same rewards
-    as the control even if it needs more time.\
-
-    The final hyperparameter we tuned was that of the standard deviation scheduler.\ The theory describes that as learning
-    progresses in the policy, the variation should become smaller.\ This is because over time we are more likely to find a more
-    optimal policy.\ This allows the reinforcement of these optimal policies by diminishing the variations between training runs.\
-    In our experiments we changed the scheduler by decreasing the variation as the policy progressed.\  We find that these changes
-    improved convergence time, but did not achieve final accuracies better than that of our control run.\ Despite this, we
-    believe this hyper parameter is the least optimized mechanism in the system.\
-
-    We find that some of our experiments were able to converge to a nearly optimal policy quicker than that of the
-    control.\ However, as the training continues, the hyper parameters proposed by the DrQ-v2 researchers converge to an optimal
-    quicker.\ We believe that with better hardware and updated software on SJSU's HPC we may have been able to see strictly better
-    convergence and training times with our proposed hyperparameter adjustments.\ Despite our limited resources, we were able to
-    briefly improve convergence times and demonstrate some of the many hyper parameters which can be tuned in DrQ-v2.\
-
     % Figure 3
-    \begin{figure}[h!]
+    \begin{figure}[!ht]
     \begin{tikzpicture}
     \begin{axis}[
         scale = .8,
@@ -265,7 +239,7 @@
     \end{figure}
 
     % Figure 4
-    \begin{figure}[h!]
+    \begin{figure}[!ht]
     \begin{tikzpicture}
     \begin{axis}[
         scale = .75,
@@ -296,16 +270,45 @@
         \caption{}
     \end{figure}
 
+    Figures 3 and 4 demonstrate this ablation study did not result in better performance than the initial control model.\ We find
+    that increasing the learning rates destroyed the tractability of our model as it was unable to learn during its training.\
+    Reversing this process and lowering the learning rates may improve the tractability of DrQ-v2. We test a total of three learning
+    rates, including a learning rate scheduler, but found the scheduler would not operate properly in DrQ-v2's system.\ We
+    believe this is the result of using learning rates that were too large for the environment space.\
+
+    With respect to the optimizer, we pivoted from Adam to AdamW. We found that this change produced slightly worse results than
+    the control runs using Adam.\ We believe this discrepancy lies in AdamW being more robust and thus more conservative in its
+    approach to learning.\ This results in AdamW gaining faster convergence for the first few hundred runs and inevitably causes
+    it to fall behind as we continue to improve the policy.\ However, with enough time, we would expect to find that AdamW converges
+    to the same policy as the control run.\
+
+    The final hyperparameter we tuned was that of the standard deviation scheduler.\ The theory describes that as learning
+    progresses in the policy, the variation between the current and the optimal diminishes.\ Meaning that over time we can reduce
+    variations in our expected optimal policy.\ In our experiments we changed the scheduler by decreasing the variation as the
+    policy progressed.\  We find that these changes improved convergence time, but did not achieve final accuracies better than
+    that of our control run.\ Despite this, we believe this is the least optimized mechanism in the system due to the sensitivity
+    of the model with respect to variance.\
+
+    We find that some of our experiments were able to converge to a nearly optimal policy quicker than that of the control run.\
+    However, as training continues, the hyper parameters proposed by the DrQ-v2 researchers out perform our experiments.\ We believe
+    that with better hardware and updated software on SJSU's HPC we may have been able to see strictly better convergence and
+    training times with our proposed hyperparameter adjustments.\ Despite our limited resources, we were able to briefly improve
+    convergence times and demonstrate some of the many components which can be tuned within DrQ-v2.\
+
+
     \section{Conclusion}\label{sec:conclusion}
 
-    This ablation study provided meaningful insight into the mechanisms that make DrQ-v2 a state-of-the-art model.\ The efficiency
-    and ingenuity of this model is necessary to provide the significant breakthrough in direct pixel observation we see.\ In all,
-    while our experiments to improve the DrQ-v2 failed, we found potential areas of interest, such as the standard deviation
-    scheduler, which may offer significant improvements.\ Through a culmination of many optimizations, DrQ-v2 has become a
-    reinforcement learning tool capable of democratizing the field.\ Its lightweight architecture and fast training times makes
-    this algorithm a gold standard for future reinforcement learning work to build from.\ Future work may find significant success
-    in the development of a strong learning rate scheduler and improvements to the standard deviation scheduler.\
+    This ablation study provided meaningful insight into the mechanisms that make DrQ-v2 a state-of-the-art reinforcement learning
+    model.\ The efficiency and ingenuity of this off-policy model is necessary to provide the significant breakthrough in direct
+    pixel observation the researchers present.\ In all, while our experiments to improve the DrQ-v2 failed, we found multiple
+    potential areas of optimization, such as the standard deviation scheduler, which may offer significant improvements.\ Through
+    a culmination of many optimizations, DrQ-v2 has become a reinforcement learning model capable of democratizing the field.\
+    The lightweight architecture and fast training times make this algorithm a gold standard for future model-free RL approaches.\
+    Future ablations into this model may find significant success in increasing the replay buffer size. The development of a strong
+    learning rate scheduler and improvements to the standard deviation scheduler may also significantly improve the models performance.\
+
 
     \bibliographystyle{ieeetr}
     \bibliography{main}
+
 \end{document}
