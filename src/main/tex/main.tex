@@ -135,7 +135,7 @@
                 \addplot [color = green, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{others/201234-pendulum-swingup-eval.csv};
             \end{axis}
         \end{tikzpicture}
-        \caption{MuJoCo Rewards}
+        \caption{A plot of the reward achieved on various MuJoCo tasks during each episode.}
         \label{fig:1}
     \end{figure}
 
@@ -197,16 +197,16 @@
                 mark size = .7pt,
                 axis line style = ultra thin,
                 legend style = {nodes = {scale = 0.9, transform shape}},
-                legend entries = {$Control$, $Step-Linear$, $Lr:1e-2$, $Lr:1e-3$, $Adamw$}
+                legend entries = {Control, Adamw, $\alpha = 10^{-2}$, $\alpha = 10^{-3}$, step\_linear}
             ]
                 \addplot [color = blue, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{experiments/203408-walker-run-eval-control.csv};
-                \addplot [color = red, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{experiments/184403-walker-run-eval-stepliner.csv};
+                \addplot [color = orange, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{experiments/222844-walker-run-eval-Adamw.csv};
                 \addplot [color = black, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{experiments/215829-walker-run-eval-1e-2.csv};
                 \addplot [color = green, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{experiments/214858-walker-run-eval-1e-3.csv};
-                \addplot [color = orange, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{experiments/222844-walker-run-eval-Adamw.csv};
+                \addplot [color = red, smooth, ultra thick] table [x = episode, y = episode_reward, col sep = comma]{experiments/184403-walker-run-eval-stepliner.csv};
             \end{axis}
         \end{tikzpicture}
-        \caption{walker\_run Rewards}
+        \caption{A plot of the reward achieved on the walker\_ run task during the control and each of the conducted experiments.}
         \label{fig:3}
     \end{figure}
 
@@ -227,13 +227,13 @@
                 mark size = .5pt,
                 axis line style = ultra thin,
                 legend style = {nodes = {scale = 0.9, transform shape}},
-                legend entries = {$Control$, $StepLinear$, $Lr:1e-2$, $Lr:1e-3$, $Adamw$}
+                legend entries = {Control, Adamw, $\alpha = 10^{-2}$, $\alpha = 10^{-3}$, step\_linear}
             ]
                 \addplot [color = blue, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/203408-walker-run-train-control.csv};
-                \addplot [color = red, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/184403-walker-run-train-stepliner.csv};
+                \addplot [color = orange, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/222844-walker-run-train-Adamw.csv};
                 \addplot [color = black, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/215829-walker-run-train-1e-2.csv};
                 \addplot [color = green, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/214858-walker-run-train-1e-3.csv};
-                \addplot [color = orange, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/222844-walker-run-train-Adamw.csv};
+                \addplot [color = red, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/184403-walker-run-train-stepliner.csv};
             \end{axis}
         \end{tikzpicture}
         \caption{walker\_run Actor Loss}
