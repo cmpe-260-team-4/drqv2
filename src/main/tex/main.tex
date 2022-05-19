@@ -86,16 +86,51 @@
     imposed by the system on which the experiments must run.\ All experiments were run on the San Jos\'e State
     University College of Engineering (CoE) High Performance Computing (HPC) system.\ The NVIDIA Tesla P100 GPUs
     provided by the HPC system were configured to run DrQ-v2 over the maximum allotted 48-hour time interval.
+    Unfortunately, given the constraints of the HPC system, the landmark results on the humanoid\_walk task~\cite{DrQv2}
+    were not reproducible.
 
     Preliminary exploration of the algorithm revealed specific hyperparameters which lent themselves to experimentation.
     The hyperparameters chosen include the optimizer, learning rate, and exploration schedule.\ Testing many tasks
-    demonstrated that walker\_run struck the right balance between difficulty and convergence time.\ A control was
-    created using walker\_run and experiments were conducted independently to ensure each change could be attributed
-    to a specific component.
+    demonstrated that walker\_run struck the right balance between difficulty and convergence time as demonstrated in
+    ~\ref{fig:1}.\ For example, the quadruped\_walk task does not converge within a reasonable amount of time.\ In
+    contrast, the pendulum\_swingup task converges so quickly that no discernible effect is likely to be observed during
+    an experiment.\ Thus, walker\_run was chosen as the control.\ Experiments were then conducted over the learning
+    rate, optimizer, and exploration schedule in order to improve the performance attained by the hyperparameters
+    published with the DrQ-v2 paper.
 
     \section{Experiments}\label{sec:experiments}
-    The DrQ-v2 paper records success in training difficult tasks like humanoid\_walk.\ Unfortunately, given the constraints of
-    the HPC, these results were not reproducible.\ Figure~\ref{fig:1} demonstrates the rewards gained by each environment.
+    The first experiment replaced the Adam optimizer with AdamW which is notable for its refinement of the original Adam
+    with decoupled weight decay.\ This change weakened overall convergence.\ This discrepancy lies in AdamW being more
+    selective in the policies it learns from.\ As a result, AdamW gained faster convergence for the first few hundred
+    episodes.\ Despite this initial performance, the selectivity of AdamW becomes a detriment over time.\ However, given
+    enough time, we would expect to find that AdamW converges to a better policy.
+
+    The second experiment explored different values for the learning rate: $10^{-3}$ and $10^{-2}$.\ Additionally, an
+    experiment was conducted using a dynamic learning rate.\ Unexpectedly, this experiment failed during training.\ Its
+    results are omitted.
+    
+    The final experiment altered the exploration schedule.\ Manipulating this metric helps control the variation in
+    explored policies based on the depth of the training.\ By default, DrQ-v2 uses a linear exploration schedule in
+    which the standard deviation decreases from 1 to 0.1.\ The final experiment replaces the linear exploration schedule
+    with a step\_linear function in which the standard deviation decreases linearly from 1 to 0.1 until episode 250,000;
+    then, it resets the standard deviation to 1 and linearly decreases until the training completes.\ Figure~\ref{fig:2}
+    demonstrates that the step\_linear schedule learns more rapidly and consistently than the linear one.
+    
+    \section{Results}\label{sec:results}
+    Figure~\ref{fig:2} demonstrates that the experiments did not exceed the performance achieved with the published
+    hyperparameters.\ However, the impact of the ablations is discernible.\ The first experiment which replaces Adam
+    with AdamW tracks nearly identically to the control, though the reward it attains is consistently lower.\ Freed from
+    the restrictions of the HPC system, we hypothesize that AdamW would eventually surpass Adam based on the slope its
+    reward curve exhibits.\ AdamW is accelerating while Adam plateaus.
+
+    The learning rate experiments proved to be largely inconsequential.\ Perhaps applied to a simpler task, they would
+    have been more effective.
+
+    The final experiment which replaces the linear exploration schedule with a step\_linear function outperforms the
+    control briefly during the initial stages of learning before being overtaken.\ Close inspection of
+    Figure~\ref{fig:2} reveals the accelerated exploration starting at episode 250 and the ensuing boost in reward.
+    However, the reward curve plateaus early.\ Additional experimentation is required to acquire greater insight into
+    why this happens.
 
     \begin{figure}[!ht]
         \begin{tikzpicture}
@@ -131,13 +166,6 @@
         \label{fig:1}
     \end{figure}
 
-    Figure~\ref{fig:1} demonstrates that walker\_run is the best balance between convergence and complexity.\ Other environments,
-    such as cheetah\_run and pendulum\_swingup converge too rapidly or not rapidly enough.\ This would prevent adequate visualization
-    regarding the performance of our hyperparameter manipulations.\ We study the learning rates, optimizers, and standard
-    deviation scheduler in order to improve the proposed hyperparameters published within the DrQ-v2 paper.\
-
-    \section{Results}\label{sec:results}
-
     \begin{figure}[!ht]
         \begin{tikzpicture}
             \begin{axis}[
@@ -165,32 +193,8 @@
             \end{axis}
         \end{tikzpicture}
         \caption{A plot of the reward achieved on the walker\_ run task during the control and each of the conducted experiments.}
-        \label{fig:3}
+        \label{fig:2}
     \end{figure}
-
-    Figure~\ref{fig:3} demonstrates the ablation study did not result in better performance than the published
-    hyperparameters.\ Two large learning rates were tested and a learning rate scheduler was introduced.\ Unexpectedly, the scheduler
-    failed during training and the bigger learning destroyed the tractability.\ Using a smaller learning rate may find prove to
-    improve performance.\
-
-    Another hyperparameter adjustment was introduced by replacing Adam with AdamW.\ We found that this change weakened overall
-    convergence .\ We believe this discrepancy lies in AdamW being more selective in the policies it learns from.\ As a result
-    AdamW gained faster convergence for the first few hundred runs.\ Despite this initial performance, the selectivity of AdamW
-    becomes a detriment as Adam quickly surpasses it.\ However, given enough time, we would expect to find that AdamW converges
-    to a better policy.\
-
-    Our final ablation altered the exploration schedule.\ Manipulating this metric helps control the variation in explored policies
-    based on the depth of the model.\ Starting from 1, DrQ-v2 uses a linearly declining function that clips the standard deviation
-    at .1 after many steps.\ Step\_linear introduces additional steps which we can further augment the standard deviation.\ Experiments
-    demonstrated this metric directly affects convergence rates.\ Figure~\ref{fig:3} demonstrates that step\_linear learns quicker
-    and more consistently than the linear alternative.\
-
-    We find that some of our experiments were able to converge to a nearly optimal policy quicker than that of the control run.
-    However, as training continues, the hyperparameters proposed by the DrQ-v2 researchers outperform our experiments.\ The efficiency
-    of DrQ-v2 leaves little room for general model improvements, but environment specific adjustments appear to be plausible.
-
-    %TODO: rewrite results.
-
 
     \section{Conclusion}\label{sec:conclusion}
 
@@ -199,6 +203,9 @@
     focus on a multitude of components including the replay buffer, exploration schedule, and introducing a learning rate scheduler.
 
     %Future studies......... TODO: write more.
+
+    The efficiency
+    of DrQ-v2 leaves little room for general model improvements, but environment specific adjustments appear to be plausible.
 
     \bibliographystyle{ieeetr}
     \bibliography{main}
