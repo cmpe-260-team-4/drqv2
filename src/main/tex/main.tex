@@ -79,14 +79,12 @@
     These include the optimizer, learning rate, and exploration noise.\ While these experiments did not yield any significant
     improvement to performance, they did aid in the authors' comprehension of its efficiency.
 
-    \section{Problem Definition}\label{sec:problem-definition}
+    \section{Methodology}\label{sec:methodology}
 
     Preliminary exploration demonstrated certain hyperparameters to be susceptible to significant optimizations.\ The following
     sections will demonstrate our ablations to improve training times and or convergence rates given the already highly optimized
     design of DrQ-v2.\ All experiments were run on the San Jos\'e State University College of Engineering (CoE) High Performance
     Computing (HPC) system.\ The NVIDIA Tesla P100 GPUs provided by the HPC were configured to run DrQ-v2 over 48-hour time intervals.
-
-    \section{Methodology}\label{sec:methodology}
 
     DrQ-v2 has been demonstrated to achieve state-of-the-art results on a number of MuJoCo environments.\ We test DrQ-v2 in multiple
     environments including cheetah\_run, cartpole\_balance, and humanoid\_walk.\ Testing multiple environments ensures we select a
