@@ -253,13 +253,13 @@
 
     Our final ablation altered the exploration schedule.\ Manipulating this metric helps control the variation in explored policies
     based on the depth of the model.\ Starting from 1, DrQ-v2 uses a linearly declining function that clips the standard deviation
-    at .1 after many steps.\ Step\_linear introduces additional steps which we can further augment the standard deviation. Experiments
-    demonstrated this metric directly effects convergence rates. Figure~\ref{fig:4} demonstrates that step\_linear learns quicker
+    at .1 after many steps.\ Step\_linear introduces additional steps which we can further augment the standard deviation.\ Experiments
+    demonstrated this metric directly affects convergence rates.\ Figure~\ref{fig:4} demonstrates that step\_linear learns quicker
     and more consistently than the linear alternative.\
 
-    We find that some of our experiments were able to converge to a nearly optimal policy quicker than that of the control run.\
+    We find that some of our experiments were able to converge to a nearly optimal policy quicker than that of the control run.
     However, as training continues, the hyperparameters proposed by the DrQ-v2 researchers outperform our experiments.\ The efficiency
-    of DrQ-v2 leaves little room for general model improvements, but environment specific adjustments appear to be plausible.\
+    of DrQ-v2 leaves little room for general model improvements, but environment specific adjustments appear to be plausible.
 
     %TODO: rewrite results.
 
@@ -268,7 +268,7 @@
 
     This ablation study provided meaningful insight into the mechanisms that make DrQ-v2 a state-of-the-art RL algorithm.\ Experiments
     demonstrated that DrQ-v2 is a highly efficient model with fine-tuned hyperparameters.\ Despite this, future studies may
-    focus on a multitude of components including the replay buffer, exploration schedule, and introducing a learning rate scheduler.\
+    focus on a multitude of components including the replay buffer, exploration schedule, and introducing a learning rate scheduler.
 
     %Future studies......... TODO: write more.
 
