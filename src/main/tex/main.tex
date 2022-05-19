@@ -64,8 +64,8 @@
     Efficient sampling of high-dimensional data has been a long-standing problem in the field of RL.\ Through recent
     advances in sampling and data augmentation, DrQ-v2 has been able to solve complex humanoid tasks.
     DreamerV2~\cite{DreamerV2}, which slightly predates DrQ-v2, can also make this claim, though it is model-based.
-    Critically, DrQ-v2 achieves the same efficacy in 4 times less training time than DreamerV2.\ The DrQ-v2 researchers
-    use a range of methods to achieve their performance including modifying the degree of exploration during training,
+    Critically, DrQ-v2 achieves the same efficacy in 4 times less wall-clock training time than DreamerV2.\ DrQ-v2
+    uses a range of methods to achieve this performance including modifying the degree of exploration during training,
     augmenting the data, expanding the replay buffer, and switching from a soft actor-critic (SAC) to a deep
     deterministic policy gradient (DDPG) design.
 
@@ -81,30 +81,28 @@
     significant improvement to performance, they did aid in the authors' comprehension of its efficiency.
 
     \section{Methodology}\label{sec:methodology}
-    DrQ-v2 has been demonstrated to achieve state-of-the-art results on a number of MuJoCo tasks.\ We test DrQ-v2 on
-    many of these tasks including cheetah\_run, cartpole\_balance, and humanoid\_walk with the intent of finding a
-    task that is challenging enough for experiments to have an impact while also converging within the constraints
-    imposed by the system on which the experiments must run.\ All experiments were run on the San Jos\'e State
-    University College of Engineering (CoE) High Performance Computing (HPC) system.\ The NVIDIA Tesla P100 GPUs
+    DrQ-v2 has been demonstrated to achieve state-of-the-art results on a number of MuJoCo~\cite{todorov2012mujoco}
+    tasks.\ We test DrQ-v2 on many of these tasks including cheetah\_run, cartpole\_balance, and humanoid\_walk with the
+    intent of finding a task that is challenging enough for experiments to have an impact while also converging within
+    the constraints imposed by the system on which the experiments must run.\ All experiments were run on the San Jos\'e
+    State University College of Engineering (CoE) High Performance Computing (HPC) system.\ The NVIDIA Tesla P100 GPUs
     provided by the HPC system were configured to run DrQ-v2 over the maximum allotted 48-hour time interval.
     Unfortunately, given the constraints of the HPC system, the landmark results on the humanoid\_walk task~\cite{DrQv2}
     were not reproducible.
 
-    Preliminary exploration of the algorithm revealed specific hyperparameters which lent themselves to experimentation.
-    The hyperparameters chosen include the optimizer, learning rate, and exploration schedule.\ Testing many tasks
-    demonstrated that walker\_run struck the right balance between difficulty and convergence time as demonstrated in
-    ~\ref{fig:1}.\ For example, the quadruped\_walk task does not converge within a reasonable amount of time.\ In
-    contrast, the pendulum\_swingup task converges so quickly that no discernible effect is likely to be observed during
-    an experiment.\ Thus, walker\_run was chosen as the control.\ Experiments were then conducted over the learning
-    rate, optimizer, and exploration schedule in order to improve the performance attained by the hyperparameters
-    published with the DrQ-v2 paper.
+    Testing many tasks demonstrated that walker\_run struck the right balance between difficulty and convergence time as
+    demonstrated in Figure~\ref{fig:1}.\ For example, the quadruped\_walk task does not converge within a reasonable
+    amount of time.\ In contrast, the pendulum\_swingup task converges so quickly that no discernible effect is likely
+    to be observed during an experiment.\ Thus, walker\_run was chosen as the control.\ Preliminary exploration of the
+    code revealed specific hyperparameters which lent themselves to experimentation.\ The chosen variables were the
+    learning rate, optimizer, and exploration schedule.
 
     \section{Experiments}\label{sec:experiments}
     The first experiment replaced the Adam optimizer with AdamW which is notable for its refinement of the original Adam
     with decoupled weight decay.\ This change weakened overall convergence.\ This discrepancy lies in AdamW being more
-    selective in the policies it learns from.\ As a result, AdamW gained faster convergence for the first few hundred
-    episodes.\ Despite this initial performance, the selectivity of AdamW becomes a detriment over time.\ However, given
-    enough time, we would expect to find that AdamW converges to a better policy.
+    selective in the policies from which it learns.\ As a result, AdamW gained faster convergence for the first few
+    hundred episodes.\ Despite this initial performance, the selectivity of AdamW became a detriment over time.
+    However, given more time, we would expect to find that AdamW converges to a better policy.
 
     The second experiment explored different values for the learning rate: $10^{-3}$ and $10^{-2}$.\ Additionally, an
     experiment was conducted using a dynamic learning rate.\ Unexpectedly, this experiment failed during training.\ Its
@@ -114,8 +112,7 @@
     explored policies based on the depth of the training.\ By default, DrQ-v2 uses a linear exploration schedule in
     which the standard deviation decreases from 1 to 0.1.\ The final experiment replaces the linear exploration schedule
     with a step\_linear function in which the standard deviation decreases linearly from 1 to 0.1 until episode 250,000;
-    then, it resets the standard deviation to 1 and linearly decreases until the training completes.\ Figure~\ref{fig:2}
-    demonstrates that the step\_linear schedule learns more rapidly and consistently than the linear one.
+    then, it resets the standard deviation to 1 and linearly decreases until the training completes.
     
     \section{Results}\label{sec:results}
     Figure~\ref{fig:2} demonstrates that the experiments did not exceed the performance achieved with the published
@@ -137,7 +134,7 @@
         \begin{tikzpicture}
             \begin{axis}[
             scale = .8,
-            title = {MuJoCo Environments: Reward},
+            title = {Reward Accumulated by Various MuJoCo Tasks},
             xlabel = {Episode},
             ylabel = {Reward},
             xmin = 0, xmax = 3200,
@@ -171,7 +168,7 @@
         \begin{tikzpicture}
             \begin{axis}[
                 scale = .8,
-                title = {walker\_run Hyperparameter Tuning: Reward},
+                title = {Reward Accumulated During walker\_run Experiments},
                 xlabel = {Episode},
                 ylabel = {Reward},
                 xmin = 0, xmax = 3200,
@@ -197,12 +194,16 @@
         \label{fig:2}
     \end{figure}
 
+    \vfill\null
+    \columnbreak
+
     \section{Conclusion}\label{sec:conclusion}
 
     This ablation study provided meaningful insight into the mechanisms that make DrQ-v2 a state-of-the-art RL
     algorithm.\ The experiments demonstrate that DrQ-v2 is a highly-efficient model with fine-tuned hyperparameters as
     evidenced by the difficulty we had in altering them.\ Despite this, future studies may focus on a multitude of
-    components including the replay buffer and exploration schedule.
+    components including the replay buffer and exploration schedule.\ In particular, the abandoned experiment which
+    switched to a dynamic learning rate seems promising.\ Given more time, we would continue pursuing that idea.
 
     \bibliographystyle{ieeetr}
     \bibliography{main}
