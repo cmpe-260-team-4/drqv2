@@ -139,41 +139,7 @@
         \label{fig:1}
     \end{figure}
 
-    \begin{figure}[!ht]
-        \begin{tikzpicture}
-            \begin{axis}[
-                scale = .8,
-                title = {MuJoCo Environments: Actor Loss},
-                xlabel = {Episode},
-                ylabel = {Actor Loss},
-                xmin = 0, xmax = 3200,
-                ymin = -200, ymax = 0,
-                xtick = {0,800,1600,2400,3200},
-                ytick = {0,-25,-50,-75,-100,-125,-150,-175,-200},
-                legend pos = north east,
-                ymajorgrids = true,
-                grid = major,
-                mark size = .5pt,
-                axis line style = ultra thin,
-                legend style = {nodes = {scale = 0.75, transform shape}},
-                legend entries = {walker\_run, cheetah\_run, walker\_walk, humanoid\_walk, quadruped\_walk,
-                            walker\_stand, cartpole\_balance, pendulum\_swingup}
-            ]
-                \addplot [color = blue, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/203408-walker-run-train-control.csv};
-                \addplot [color = red, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{others/031508-cheetah-run-train.csv};
-                \addplot [color = cyan, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{others/154418-walker-walk-train.csv};
-                \addplot [color = gray, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{others/175732-humanoid-walk-train.csv};
-                \addplot [color = black, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{others/180549-quadruped-train.csv};
-                \addplot [color = orange, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{others/190918-walker-stand-train.csv};
-                \addplot [color = purple, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{others/191540-cartpole-balance-train.csv};
-                \addplot [color = green, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{others/201234-pendulum-swingup-train.csv};
-            \end{axis}
-        \end{tikzpicture}
-        \caption{MuJoCo Actor Loss}
-        \label{fig:2}
-    \end{figure}
-
-    Figures~\ref{fig:1} and~\ref{fig:2} both demonstrate that walker\_run is the best balance between convergence and complexity.\ Other environments,
+    Figure~\ref{fig:1} demonstrates that walker\_run is the best balance between convergence and complexity.\ Other environments,
     such as cheetah\_run and pendulum\_swingup converge too rapidly or not rapidly enough.\ This would prevent adequate visualization
     regarding the performance of our hyperparameter manipulations.\ We study the learning rates, optimizers, and standard
     deviation scheduler in order to improve the proposed hyperparameters published within the DrQ-v2 paper.\
@@ -210,37 +176,7 @@
         \label{fig:3}
     \end{figure}
 
-    \begin{figure}[!ht]
-        \begin{tikzpicture}
-            \begin{axis}[
-                scale = .75,
-                title = {walker\_run Hyperparameter Tuning: Actor Loss},
-                xlabel = {Episode},
-                ylabel = {Actor Loss},
-                xmin = 0, xmax = 3200,
-                ymin = -165, ymax = 0,
-                xtick = {0,800,1600,2400,3200},
-                ytick = {0,-25,-50,-75,-100,-125,-150,-175},
-                legend pos = north east,
-                ymajorgrids = true,
-                grid = major,
-                mark size = .5pt,
-                axis line style = ultra thin,
-                legend style = {nodes = {scale = 0.9, transform shape}},
-                legend entries = {Control, Adamw, $\alpha = 10^{-2}$, $\alpha = 10^{-3}$, step\_linear}
-            ]
-                \addplot [color = blue, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/203408-walker-run-train-control.csv};
-                \addplot [color = orange, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/222844-walker-run-train-Adamw.csv};
-                \addplot [color = black, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/215829-walker-run-train-1e-2.csv};
-                \addplot [color = green, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/214858-walker-run-train-1e-3.csv};
-                \addplot [color = red, smooth, ultra thick] table [x = episode, y = actor_loss, col sep = comma]{experiments/184403-walker-run-train-stepliner.csv};
-            \end{axis}
-        \end{tikzpicture}
-        \caption{walker\_run Actor Loss}
-        \label{fig:4}
-    \end{figure}
-
-    Figures~\ref{fig:3} and~\ref{fig:4} demonstrate the ablation study did not result in better performance than the published
+    Figure~\ref{fig:3} demonstrates the ablation study did not result in better performance than the published
     hyperparameters.\ Two large learning rates were tested and a learning rate scheduler was introduced.\ Unexpectedly, the scheduler
     failed during training and the bigger learning destroyed the tractability.\ Using a smaller learning rate may find prove to
     improve performance.\
@@ -254,7 +190,7 @@
     Our final ablation altered the exploration schedule.\ Manipulating this metric helps control the variation in explored policies
     based on the depth of the model.\ Starting from 1, DrQ-v2 uses a linearly declining function that clips the standard deviation
     at .1 after many steps.\ Step\_linear introduces additional steps which we can further augment the standard deviation.\ Experiments
-    demonstrated this metric directly affects convergence rates.\ Figure~\ref{fig:4} demonstrates that step\_linear learns quicker
+    demonstrated this metric directly affects convergence rates.\ Figure~\ref{fig:3} demonstrates that step\_linear learns quicker
     and more consistently than the linear alternative.\
 
     We find that some of our experiments were able to converge to a nearly optimal policy quicker than that of the control run.
