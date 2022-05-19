@@ -46,16 +46,13 @@
     \maketitle
 
     \begin{abstract}
-        
-    Modern approaches to reinforcement learning (RL) are notorious for their extensive training times and complexity.\ The uncertain
-    environment space necessitates the use of robust system design.\ As the complexity of the problem space rises, more efficient
-    systems must be developed to improve training times.\ DrQ-v2~\cite{DrQv2} is the second iteration of an off-policy actor-critic
-    sampling algorithm which efficiently models complex continuous systems using data augmentation.\ DrQ-v2 is notable for its
-    ability to perform direct pixel observations on visually continuous systems.\ \enquote{Furthermore, DrQ-v2 is able to solve
-    complex humanoid locomotion tasks directly from pixel observations, previously unattained by model-free RL.}~\cite{DrQv2} This
-    paper will highlight important components that contribute to its efficiency and ingenuity.\ Experiments to measure the effectiveness of
-    DrQ-v2's hyperparameters demonstrate that DrQ-v2 is an exceptionally well-tuned model that may democratize the field of RL.
-
+        Modern approaches to reinforcement learning (RL) are notorious for extensive training times and complexity.\ As
+        they are applied to higher-dimensional problems, it is important to revisit their foundations with an eye for
+        inefficiencies.\ That's exactly what the creators of one such algorithm (DrQ-v2) did.\ DrQ-v2~\cite{DrQv2} is
+        the second iteration of an off-policy, actor-critic sampling algorithm.\ DrQ-v2 learns to control continuous
+        environments via direct pixel observation.\ Notably, it is the first model-free algorithm \enquote{to solve
+        complex humanoid locomotion tasks.}~\cite{DrQv2} This paper introduces the core concepts of DrQ-v2 and records
+        experiments which ablate targeted areas of the core algorithm.
     \end{abstract}
 
     \begin{IEEEkeywords}
@@ -63,12 +60,6 @@
     \end{IEEEkeywords}
 
     \section{Introduction}\label{sec:introduction}
-
-
-    %Example inline math with vector notation: \(\mathbf{w} = [1, 2, 3]\).
-    %Example math block:
-    %\[w = w - \eta \nabla f(w).\]
-
     Efficient sampling of high-dimensional data has been a long-standing problem in the field of RL.\ Through recent advances in
     sampling and data augmentation, DrQ-v2 has been able to solve complex humanoid tasks in previously unattainable times.\
     DreamerV2~\cite{DreamerV2} is a recent example of a state-of-the-art model that incorporated similar advancements.\
