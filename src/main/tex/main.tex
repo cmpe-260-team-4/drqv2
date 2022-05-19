@@ -80,28 +80,22 @@
     significant improvement to performance, they did aid in the authors' comprehension of its efficiency.
 
     \section{Methodology}\label{sec:methodology}
+    DrQ-v2 has been demonstrated to achieve state-of-the-art results on a number of MuJoCo tasks.\ We test DrQ-v2 on
+    many of these tasks including cheetah\_run, cartpole\_balance, and humanoid\_walk with the intent of finding a
+    task that is challenging enough for experiments to have an impact while also converging within the constraints
+    imposed by the system on which the experiments must run.\ All experiments were run on the San Jos\'e State
+    University College of Engineering (CoE) High Performance Computing (HPC) system.\ The NVIDIA Tesla P100 GPUs
+    provided by the HPC system were configured to run DrQ-v2 over the maximum allotted 48-hour time interval.
 
-    Preliminary exploration demonstrated certain hyperparameters to be susceptible to significant optimizations.\ The following
-    sections will demonstrate our ablations to improve training times and or convergence rates given the already highly optimized
-    design of DrQ-v2.\ All experiments were run on the San Jos\'e State University College of Engineering (CoE) High Performance
-    Computing (HPC) system.\ The NVIDIA Tesla P100 GPUs provided by the HPC were configured to run DrQ-v2 over 48-hour time intervals.
-
-    DrQ-v2 has been demonstrated to achieve state-of-the-art results on a number of MuJoCo environments.\ We test DrQ-v2 in multiple
-    environments including cheetah\_run, cartpole\_balance, and humanoid\_walk.\ Testing multiple environments ensures we select a
-    control that is challenging enough to test the abilities of DrQ-v2 while also maintaining convergence capabilities within
-    our 48-hour time limit.\ Once an environment has been selected various ablations will be conducted and results will be
-    gathered for visualization.\
+    Preliminary exploration of the algorithm revealed specific hyperparameters which lent themselves to experimentation.
+    The hyperparameters chosen include the optimizer, learning rate, and exploration schedule.\ Testing many tasks
+    demonstrated that walker\_run struck the right balance between difficulty and convergence time.\ A control was
+    created using walker\_run and experiments were conducted independently to ensure each change could be attributed
+    to a specific component.
 
     \section{Experiments}\label{sec:experiments}
-
-    Experiments were conducted on the optimizer, learning rate, and exploration schedule.\ Our resource restrictions require a
-    MuJoCo environment which balances complexity and convergence.\ Testing many environments demonstrated that walker\_run balanced
-    these metrics efficiently.\ A control was created using walker\_run and Hyperparameter tests were conducted to independently
-    ensure each change could be attributable to a specific component.\
-
     The DrQ-v2 paper records success in training difficult tasks like humanoid\_walk.\ Unfortunately, given the constraints of
-    the HPC, these results were not reproducible.\ Figure~\ref{fig:1} demonstrates the rewards gained by each environment
-    while Figure~\ref{fig:2} demonstrates the actor loss.
+    the HPC, these results were not reproducible.\ Figure~\ref{fig:1} demonstrates the rewards gained by each environment.
 
     \begin{figure}[!ht]
         \begin{tikzpicture}
