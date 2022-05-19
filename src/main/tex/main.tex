@@ -60,13 +60,13 @@
     \end{IEEEkeywords}
 
     \section{Introduction}\label{sec:introduction}
-    Efficient sampling of high-dimensional data has been a long-standing problem in the field of RL.\ Through recent advances in
-    sampling and data augmentation, DrQ-v2 has been able to solve complex humanoid tasks in previously unattainable times.\
-    DreamerV2~\cite{DreamerV2} is a recent example of a state-of-the-art model that incorporated similar advancements.\
-    Despite this, DreamerV2 trains 4x slower than DrQ-v2 and requires multiple GPUs.\ This discrepancy in training
-    times, can be attributed to the components and design decisions.\ The researchers use a range of methods to achieve their
-    performance including modifying the degree of exploration during training, augmenting the data, expanding the
-    replay buffer, and switching from a soft actor-critic (SAC) to a deep deterministic policy gradient (DDPG).\
+    Efficient sampling of high-dimensional data has been a long-standing problem in the field of RL.\ Through recent
+    advances in sampling and data augmentation, DrQ-v2 has been able to solve complex humanoid tasks.
+    DreamerV2~\cite{DreamerV2}, which slightly predates DrQ-v2, can also make this claim, though it is model-based.
+    Critically, DrQ-v2 achieves the same efficacy in 4 times less training time than DreamerV2.\ The DrQ-v2 researchers
+    use a range of methods to achieve their performance including modifying the degree of exploration during training,
+    augmenting the data, expanding the replay buffer, and switching from a soft actor-critic (SAC) to a deep
+    deterministic policy gradient (DDPG) design.
 
     %The exploration scheduler controls the rate of model variance between policies.\ Image data is augmented by
     %flipping, cropping, and padding to ensure generalization of the problem space.\ Sampling significantly reduces the computational
@@ -75,9 +75,9 @@
     %This increase has been directly attributed to a performance boost of 3.5x.\ Finally, and most notably, DrQ-v2 uses a DDPG
     %to manage the rate of reward propagation.\ This ensures DrQ-v2 remains stable as it progresses through the action space.\
 
-    This study explores the inner mechanics of DrQ-v2 and injects various ablations intended to improve performance.\
-    These include the optimizer, learning rate, and exploration noise.\ While these experiments did not yield any significant
-    improvement to performance, they did aid in the authors' comprehension of its efficiency.
+    This study explores the inner mechanics of DrQ-v2 and injects various ablations intended to improve performance.
+    These include the optimizer, learning rate, and exploration noise.\ While these experiments did not yield any
+    significant improvement to performance, they did aid in the authors' comprehension of its efficiency.
 
     \section{Methodology}\label{sec:methodology}
 
