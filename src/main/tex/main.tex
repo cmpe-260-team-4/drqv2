@@ -49,10 +49,11 @@
         Modern approaches to reinforcement learning (RL) are notorious for extensive training times and complexity.\ As
         they are applied to higher-dimensional problems, it is important to revisit their foundations with an eye for
         inefficiencies.\ That's exactly what the creators of one such algorithm (DrQ-v2) did.\ DrQ-v2~\cite{DrQv2} is
-        the second iteration of an off-policy, actor-critic sampling algorithm.\ DrQ-v2 learns to control continuous
-        environments via direct pixel observation.\ Notably, it is the first model-free algorithm \enquote{to solve
-        complex humanoid locomotion tasks.}~\cite{DrQv2} This paper introduces the core concepts of DrQ-v2 and records
-        experiments which ablate targeted areas of the core algorithm.
+        the second iteration of the Data-regularized Q (DRQ) algorithm.\ It is an off-policy, actor-critic sampling
+        algorithm.\ DrQ-v2 learns to control continuous environments via direct pixel observation.\ Notably, it is the
+        first model-free algorithm \enquote{to solve complex humanoid locomotion tasks.}~\cite{DrQv2} This paper
+        introduces the core concepts of DrQ-v2 and records experiments which ablate targeted areas of the core
+        algorithm.
     \end{abstract}
 
     \begin{IEEEkeywords}
@@ -76,7 +77,7 @@
     %to manage the rate of reward propagation.\ This ensures DrQ-v2 remains stable as it progresses through the action space.\
 
     This study explores the inner mechanics of DrQ-v2 and injects various ablations intended to improve performance.
-    These include the optimizer, learning rate, and exploration noise.\ While these experiments did not yield any
+    These include the optimizer, learning rate, and exploration schedule.\ While these experiments did not yield any
     significant improvement to performance, they did aid in the authors' comprehension of its efficiency.
 
     \section{Methodology}\label{sec:methodology}
@@ -198,14 +199,10 @@
 
     \section{Conclusion}\label{sec:conclusion}
 
-    This ablation study provided meaningful insight into the mechanisms that make DrQ-v2 a state-of-the-art RL algorithm.\ Experiments
-    demonstrated that DrQ-v2 is a highly efficient model with fine-tuned hyperparameters.\ Despite this, future studies may
-    focus on a multitude of components including the replay buffer, exploration schedule, and introducing a learning rate scheduler.
-
-    %Future studies......... TODO: write more.
-
-    The efficiency
-    of DrQ-v2 leaves little room for general model improvements, but environment specific adjustments appear to be plausible.
+    This ablation study provided meaningful insight into the mechanisms that make DrQ-v2 a state-of-the-art RL
+    algorithm.\ The experiments demonstrate that DrQ-v2 is a highly-efficient model with fine-tuned hyperparameters as
+    evidenced by the difficulty we had in altering them.\ Despite this, future studies may focus on a multitude of
+    components including the replay buffer and exploration schedule.
 
     \bibliographystyle{ieeetr}
     \bibliography{main}
