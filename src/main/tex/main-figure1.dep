@@ -1,0 +1,3 @@
+main-figure1.pdf: cheeth_run_3090_eval_R.csv
+main-figure1.pdf: humanoid_walk_2420_eval_R.csv
+main-figure1.pdf: cartpole_balance_1090_eval_R.csv

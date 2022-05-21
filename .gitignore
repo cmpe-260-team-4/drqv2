@@ -13,5 +13,7 @@ cancel_sweep.py
 .idea
 
 # Added by cmpe-260-team-4
+.DS_Store
 auxil
 out
+/src/main/tex/figures/
